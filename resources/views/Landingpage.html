@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Billing Warnet - Booking</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+</head>
+<body style="background-color: #f5f5f5;">
+    
+    <!-- Hero Section with Navbar Inside -->
+    <section class="text-white position-relative" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600') center/cover; min-height: 600px;">
+        
+        <!-- Navbar di dalam foto -->
+        <nav class="navbar navbar-expand-lg navbar-dark position-absolute w-100" style="z-index: 10;">
+            <div class="container py-3">
+                <a class="navbar-brand" href="#">
+                    <img src="LogMM.png" alt="Logo WD" style="height: 50px;">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link fs-5 fw-semibold" href="#bantuan">Bantuan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fs-5 fw-semibold" href="#kontak">Kontak kami</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fs-5 fw-semibold" href="#about">About us</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Content - POSISI KIRI -->
+        <div class="container d-flex align-items-center" style="min-height: 600px; padding-top: 80px;">
+            <div class="row w-100">
+                <div class="col-lg-7">
+                    <h1 class="display-2 fw-bold mb-4" style="text-shadow: 3px 3px 10px rgba(0,0,0,0.9);">Website Billing Warnet</h1>
+                    <p class="display-6 mb-5 fw-bold" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.9);">Booking</p>
+                    <button class="btn btn-lg px-5 py-3 fw-bold fs-5 shadow-lg" style="background-color: #001F3F; color: #FFFFFF; border: none;" data-bs-toggle="modal" data-bs-target="#bookingModal">
+                        <i class="bi bi-calendar-check me-2"></i>Booking Sekarang
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Price Cards Section -->
+    <section class="py-5" style="background-color: #f5f5f5;">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold display-5" style="color: #1a1a1a;">Pilih Paket Anda</h2>
+            <div class="row g-4">
+                
+                <!-- Paket Pagi -->
+                <div class="col-lg-4">
+                    <div class="card text-white shadow-lg border-0 d-flex flex-column h-100" style="background: linear-gradient(135deg, #fb8122 0%, #ebdb79 100%);">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h3 class="card-title fw-bold mb-4">SUNRISE SET</h3>
+                            <p class="text-white-50 mb-4">(07.00 - 12.00)</p>
+                            
+                            <div class="mb-3 p-3 rounded" style="background-color: rgba(0, 31, 63, 0.3); border-left: 4px solid #fb8122;">
+                                <p class="fw-bold mb-2 fs-5" style="color: #ffffff;">STANDAR</p>
+                                <h4 class="fw-bold mb-0">RP 40.000</h4>
+                            </div>
+                            
+                            <div class="mb-3 p-3 rounded" style="background-color: rgba(0, 31, 63, 0.3); border-left: 4px solid #fb8122;">
+                                <p class="fw-bold mb-2 fs-5" style="color: #ffffff;">VIP</p>
+                                <h4 class="fw-bold mb-0">RP 50.000</h4>
+                            </div>
+                            
+                            <div class="mb-4 p-3 rounded" style="background-color: rgba(0, 31, 63, 0.3); border-left: 4px solid #fb8122;">
+                                <p class="fw-bold mb-2 fs-5" style="color: #ffffff;">ARENA</p>
+                                <h4 class="fw-bold mb-0">RP 65.000</h4>
+                            </div>
+                            
+                            <button class="btn w-100 py-3 fw-bold mt-auto shadow" style="background-color: #fb8122; color: #FFFFFF; border: none;" data-bs-toggle="modal" data-bs-target="#bookingModal" data-paket="Pagi">
+                                <i class="bi bi-cart-plus me-2"></i>Pilih Paket
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paket Malam -->
+                <div class="col-lg-4">
+                    <div class="card text-white shadow-lg border-0 d-flex flex-column h-100" style="background: linear-gradient(135deg, #020408 0%, #365475 100%);">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h3 class="card-title fw-bold mb-4">OWL MODE</h3>
+                            <p class="text-white-50 mb-4">(22.00 - 06.00)</p>
+                            
+                            <div class="mb-3 p-3 rounded" style="background-color: rgba(0, 31, 63, 0.128); border-left: 4px solid #365475;">
+                                <p class="fw-bold mb-2 fs-5" style="color: #5981b1;">STANDAR</p>
+                                <h4 class="fw-bold mb-0">RP 50.000</h4>
+                            </div>
+                            
+                            <div class="mb-3 p-3 rounded" style="background-color: rgba(0, 31, 63, 0.128); border-left: 4px solid #365475;">
+                                <p class="fw-bold mb-2 fs-5" style="color: #5981b1;">VIP</p>
+                                <h4 class="fw-bold mb-0">RP 60.000</h4>
+                            </div>
+                            
+                            <div class="mb-4 p-3 rounded" style="background-color: rgba(0, 31, 63, 0.128); border-left: 4px solid #365475;">
+                                <p class="fw-bold mb-2 fs-5" style="color: #5981b1;">ARENA</p>
+                                <h4 class="fw-bold mb-0">RP 70.000</h4>
+                            </div>
+                            
+                            <button class="btn w-100 py-3 fw-bold mt-auto shadow" style="background-color: #15273c; color: #FFFFFF; border: none;" data-bs-toggle="modal" data-bs-target="#bookingModal" data-paket="Malam">
+                                <i class="bi bi-cart-plus me-2"></i>Pilih Paket
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing List -->
+                <div class="col-lg-4">
+                    <div class="card shadow-lg border-0 d-flex flex-column h-100" style="background: linear-gradient(135deg, #868686 0%, #e8eaec 100%); border: 2px solid #e9ecef;">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h3 class="card-title fw-bold mb-4" style="color: #ffffff;">BILLING LIST</h3>
+                            <p class="mb-4" style="color: #ffffff;">(PER HOURS)</p>
+                            
+                            <div class="mb-3 p-3 rounded" style="background-color: rgba(255, 255, 255, 0.128); border-left: 4px solid #ffffff;">
+                                <p class="fw-bold mb-2 fs-5" style="color: #ffffff;">STANDAR</p>
+                                <h4 class="fw-bold mb-0" style="color: #ffffff;">RP 12.000</h4>
+                            </div>
+                            
+                            <div class="mb-3 p-3 rounded" style="background-color: rgba(255, 255, 255, 0.128); border-left: 4px solid #ffffff;">
+                                <p class="fw-bold mb-2 fs-5" style="color: #ffffff;">VIP</p>
+                                <h4 class="fw-bold mb-0" style="color: #ffffff;">RP 15.000</h4>
+                            </div>
+                            
+                            <div class="mb-4 p-3 rounded" style="background-color: rgba(255, 255, 255, 0.128); border-left: 4px solid #ffffff;">
+                                <p class="fw-bold mb-2 fs-5" style="color: #ffffff;">ARENA</p>
+                                <h4 class="fw-bold mb-0" style="color: #ffffff;">RP 20.000</h4>
+                            </div>
+                            
+                            <button class="btn w-100 py-3 fw-bold mt-auto shadow" style="background-color: #001F3F; color: #FFFFFF; border: none;" data-bs-toggle="modal" data-bs-target="#bookingModal" data-paket="Billing">
+                                <i class="bi bi-cart-plus me-2"></i>Pilih Paket
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5" style="background-color: #FFFFFF;" id="bantuan">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold display-5" style="color: #1a1a1a;">Fasilitas Kami</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100" style="transition: transform 0.3s;">
+                        <div class="card-body text-center p-4">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background-color: #e7f5ff;">
+                                <i class="bi bi-lightning-charge-fill fs-1" style="color: #001F3F;"></i>
+                            </div>
+                            <h5 class="fw-bold" style="color: #1a1a1a;">Koneksi Super Cepat</h5>
+                            <p class="text-muted">Internet fiber optic 1 Gbps untuk gaming lancar</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100" style="transition: transform 0.3s;">
+                        <div class="card-body text-center p-4">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background-color: #e7f5ff;">
+                                <i class="bi bi-pc-display fs-1" style="color: #001F3F;"></i>
+                            </div>
+                            <h5 class="fw-bold" style="color: #1a1a1a;">PC Spek Gaming</h5>
+                            <p class="text-muted">RTX 4070, Intel i7, 32GB RAM, Monitor 144Hz</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100" style="transition: transform 0.3s;">
+                        <div class="card-body text-center p-4">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background-color: #e7f5ff;">
+                                <i class="bi bi-snow fs-1" style="color: #001F3F;"></i>
+                            </div>
+                            <h5 class="fw-bold" style="color: #1a1a1a;">AC & Ruangan Nyaman</h5>
+                            <p class="text-muted">Full AC dengan suasana gaming yang cozy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);" id="kontak">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <h3 class="fw-bold mb-4" style="color: #1a1a1a;">Kontak Kami</h3>
+                    <p class="mb-3" style="color: #495057;">
+                        <i class="bi bi-geo-alt-fill me-2 fs-5" style="color: #001F3F;"></i> 
+                        Jl. Gaming Center No. 123, Jakarta
+                    </p>
+                    <p class="mb-3" style="color: #495057;">
+                        <i class="bi bi-telephone-fill me-2 fs-5" style="color: #001F3F;"></i> 
+                        0812-3456-7890
+                    </p>
+                    <p class="mb-4" style="color: #495057;">
+                        <i class="bi bi-envelope-fill me-2 fs-5" style="color: #001F3F;"></i> 
+                        info@warnetwd.com
+                    </p>
+                    <div class="mt-4">
+                        <a href="#" class="btn btn-outline-primary rounded-circle p-3 me-2" style="width: 50px; height: 50px; border-color: #001F3F; color: #001F3F;">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-primary rounded-circle p-3 me-2" style="width: 50px; height: 50px; border-color: #001F3F; color: #001F3F;">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-primary rounded-circle p-3" style="width: 50px; height: 50px; border-color: #001F3F; color: #001F3F;">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6" id="about">
+                    <h3 class="fw-bold mb-4" style="color: #1a1a1a;">Tentang Kami</h3>
+                    <p style="color: #495057;">Warnet WD adalah tempat gaming terbaik dengan fasilitas lengkap dan harga terjangkau. Kami menyediakan berbagai paket untuk kebutuhan gaming, browsing, dan kerja Anda.</p>
+                    <p class="mb-0 fw-semibold" style="color: #001F3F;">Buka setiap hari 24 jam!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div class="modal fade" id="bookingModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-calendar-check me-2"></i>Form Booking</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="bookingForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" style="color: #1a1a1a;">Nama Lengkap</label>
+                            <input type="text" class="form-control form-control-lg" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" style="color: #1a1a1a;">No. WhatsApp</label>
+                            <input type="tel" class="form-control form-control-lg" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" style="color: #1a1a1a;">Pilih Paket</label>
+                            <select class="form-select form-select-lg" id="paketSelect" required>
+                                <option value="">Pilih Paket...</option>
+                                <option value="Sunrise - Standar">Sunrise Set - Standar (Rp 40.000)</option>
+                                <option value="Sunrise - VIP">Sunrise Set - VIP (Rp 50.000)</option>
+                                <option value="Sunrise - Arena">Sunrise Set - Arena (Rp 65.000)</option>
+                                <option value="Owl - Standar">Owl Mode - Standar (Rp 50.000)</option>
+                                <option value="Owl - VIP">Owl Mode - VIP (Rp 60.000)</option>
+                                <option value="Owl - Arena">Owl Mode - Arena (Rp 70.000)</option>
+                                <option value="Billing - Standar">Billing - Standar (Rp 12.000/jam)</option>
+                                <option value="Billing - VIP">Billing - VIP (Rp 15.000/jam)</option>
+                                <option value="Billing - Arena">Billing - Arena (Rp 20.000/jam)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" style="color: #1a1a1a;">Tanggal & Waktu</label>
+                            <input type="datetime-local" class="form-control form-control-lg" required>
+                        </div>
+                        <button type="submit" class="btn btn-lg w-100 fw-bold shadow" style="background-color: #001F3F; color: #FFFFFF; border: none;">
+                            <i class="bi bi-check-circle me-2"></i>Konfirmasi Booking
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-white text-center py-4" style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);">
+        <p class="mb-0">&copy; 2025 Warnet WD. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Booking berhasil! Kami akan menghubungi Anda segera.');
+            bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
+            this.reset();
+        });
+
+        document.querySelectorAll('[data-paket]').forEach(button => {
+            button.addEventListener('click', function() {
+                const paket = this.getAttribute('data-paket');
+                document.getElementById('paketSelect').value = '';
+            });
+        });
+    </script>
+</body>
+</html>
