@@ -6,12 +6,16 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 use App\Http\Controllers\TransactionController;
 >>>>>>> 4c11faf (first comm)
 =======
 use App\Http\Controllers\TransactionController;
 >>>>>>> 4c11faf2aa747796b3f8d69bd93de3cddd12f5ff
+=======
+use App\Http\Controllers\TransactionController;
+>>>>>>> fix-login
 
 // ========================================
 // LANDING PAGE
@@ -54,29 +58,34 @@ Route::middleware(['auth'])->group(function () {
 });
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> 4c11faf2aa747796b3f8d69bd93de3cddd12f5ff
+=======
+>>>>>>> fix-login
 
 // ========================================
 // TRANSACTION ROUTES
 // ========================================
 Route::middleware(['auth'])->prefix('transactions')->name('transactions.')->group(function () {
-
+    
     // Lihat detail transaksi (semua role yang login bisa akses, tapi ada policy check di controller)
     Route::get('/{transaction}', [TransactionController::class, 'show'])->name('show');
-
+    
     // Update status pesanan (hanya admin_kantin dan admin_web)
-    // routes/web.php
-Route::middleware(['auth', 'role:admin_kantin'])->group(function () {
-    Route::patch('/transactions/{transaction}/status', [TransactionController::class, 'updateStatus'])
-        ->name('transactions.update-status');
-}); 
-
+    Route::patch('/{transaction}/status', [TransactionController::class, 'updateStatus'])
+        ->name('update-status')
+        ->middleware('role:admin_kantin,admin_web');
+    
     // Cancel pesanan (customer dan admin_kantin bisa akses, ada policy check di controller)
     Route::patch('/{transaction}/cancel', [TransactionController::class, 'cancel'])->name('cancel');
+<<<<<<< HEAD
 });
 <<<<<<< HEAD
 >>>>>>> 4c11faf (first comm)
 =======
 >>>>>>> 4c11faf2aa747796b3f8d69bd93de3cddd12f5ff
+=======
+});
+>>>>>>> fix-login

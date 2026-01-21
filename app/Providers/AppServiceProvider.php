@@ -4,24 +4,22 @@ namespace App\Providers;
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fix-login
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         //
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> 4c11faf2aa747796b3f8d69bd93de3cddd12f5ff
@@ -48,5 +46,7 @@ class AuthServiceProvider extends ServiceProvider
 >>>>>>> 4c11faf (first comm)
 =======
 >>>>>>> 4c11faf2aa747796b3f8d69bd93de3cddd12f5ff
+=======
+>>>>>>> fix-login
     }
 }
