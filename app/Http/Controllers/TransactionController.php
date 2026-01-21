@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
@@ -15,6 +16,12 @@ class TransactionController extends Controller
         $request->validate([
             'status' => 'required|in:pending,processing,ready,completed,cancelled'
         ]);
+
+          $oldStatus = $transaction->status;
+        $newStatus = $request->status;
+
+
+        $transaction->update(['status' => $newStatus]);
 
         $transaction->update(['status' => $request->status]);
 
