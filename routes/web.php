@@ -4,10 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
-<<<<<<< HEAD
-=======
 use App\Http\Controllers\TransactionController;
->>>>>>> 4c11faf (first comm)
 
 // ========================================
 // LANDING PAGE
@@ -48,25 +45,20 @@ Route::middleware(['auth'])->group(function () {
     // Halaman Sukses
     Route::get('/order-success', [OrderController::class, 'success'])->name('order.success');
 });
-<<<<<<< HEAD
-=======
 
 // ========================================
 // TRANSACTION ROUTES
 // ========================================
 Route::middleware(['auth'])->prefix('transactions')->name('transactions.')->group(function () {
-
+    
     // Lihat detail transaksi (semua role yang login bisa akses, tapi ada policy check di controller)
     Route::get('/{transaction}', [TransactionController::class, 'show'])->name('show');
-
+    
     // Update status pesanan (hanya admin_kantin dan admin_web)
-    // routes/web.php
-Route::middleware(['auth', 'role:admin_kantin'])->group(function () {
-    Route::patch('/transactions/{transaction}/status', [TransactionController::class, 'updateStatus'])
-        ->name('transactions.update-status');
-}); 
-
+    Route::patch('/{transaction}/status', [TransactionController::class, 'updateStatus'])
+        ->name('update-status')
+        ->middleware('role:admin_kantin,admin_web');
+    
     // Cancel pesanan (customer dan admin_kantin bisa akses, ada policy check di controller)
     Route::patch('/{transaction}/cancel', [TransactionController::class, 'cancel'])->name('cancel');
 });
->>>>>>> 4c11faf (first comm)
