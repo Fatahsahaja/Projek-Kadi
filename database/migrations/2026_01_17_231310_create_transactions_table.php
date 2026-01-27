@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('cashier_name');
             $table->text('items'); // JSON string
-            $table->string('phone');
+            $table->string('phone')->nullable();
             $table->decimal('total', 15, 2);
             $table->enum('status', ['SUKSES', 'SELESAI', 'PENDING'])->default('PENDING');
             $table->timestamps();
