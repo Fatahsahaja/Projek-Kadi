@@ -118,11 +118,31 @@
                     <td>{{ $tx->cashier_name }}</td>
                     <td>{{ $tx->phone }}</td>
                     <td><strong>Rp {{ number_format($tx->total, 0, ',', '.') }}</strong></td>
-                    <td>
-                        <span class="badge badge-{{ $tx->status === 'SELESAI' ? 'success' : 'warning' }}">
-                            {{ $tx->status }}
+                           <td>
+                    @if($transaction->status === 'pending')
+                        <form action="{{ route('transactions.updateStatus', $transaction->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="status" value="completed">
+                            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Yakin selesai?')">
+                                ✓ Selesai
+                            </button>
+                        </form>
+                        
+                        <form action="{{ route('transactions.updateStatus', $transaction->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="status" value="cancelled">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin batalkan?')">
+                                ✗ Batalkan
+                            </button>
+                        </form>
+                    @else
+                        <span class="badge badge-{{ $transaction->status === 'completed' ? 'success' : 'secondary' }}">
+                            {{ ucfirst($transaction->status) }}
                         </span>
-                    </td>
+                    @endif
+                </td>
                     <td>{{ $tx->created_at->format('d M Y H:i') }}</td>
                 </tr>
                 @empty
