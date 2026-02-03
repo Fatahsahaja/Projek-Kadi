@@ -25,77 +25,99 @@
 
         /* --- SIDEBAR KIRI --- */
         .sidebar {
-            width: 250px;
-            padding: 40px 20px;
-            border-right: 1px solid #eee; /* Garis tipis pemisah */
+            width: 280px; /* Lebarkan dikit biar muat Top Singko */
+            padding: 40px 25px;
+            border-right: 1px solid #eee;
             display: flex;
             flex-direction: column;
+            background: #fff;
+        }
+
+        .user-profile {
+            display: flex;
             align-items: center;
-            text-align: center;
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
         .user-avatar {
-            width: 80px;
-            height: 80px;
-            background-color: #ff6b6b; /* Warna pink/merah kayak di gambar */
+            width: 60px;
+            height: 60px;
+            background-color: #ff6b6b;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 15px;
-        }
-
-        .user-avatar i {
-            font-size: 40px;
             color: white;
+            font-size: 24px;
         }
 
-        .user-name {
+        .user-info h4 {
+            font-size: 1rem;
             font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
+            margin: 0;
         }
 
-        .balance-label {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
+        .user-info p {
+            font-size: 0.8rem;
+            color: #999;
+            margin: 0;
         }
 
-        .balance-amount {
-            font-size: 1.5rem;
-            font-weight: 700;
+        /* Balance Section */
+        .balance-section {
             margin-bottom: 40px;
-            color: #000;
         }
+        .balance-label { font-size: 0.9rem; color: #666; }
+        .balance-amount { font-size: 1.6rem; font-weight: 700; color: #000; }
 
-        .sidebar-menu {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .menu-link {
+        /* Menu Links (Tambah Stok, dll) */
+        .sidebar-menu a {
+            display: block;
             color: #999;
             text-decoration: none;
             font-weight: 500;
+            margin-bottom: 15px;
             transition: 0.3s;
         }
+        .sidebar-menu a:hover { color: #f7941d; }
 
-        .menu-link:hover {
-            color: #f7941d;
+        /* TOP SINGKO CARD */
+        .top-singko-box {
+            background: #fff9f0;
+            border: 1px solid #ffeeba;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+        .top-singko-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #d37b12;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .top-singko-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        .top-singko-phone {
+            font-size: 0.8rem;
+            color: #777;
         }
 
-        /* Tombol Logout kita styling simpel */
+        /* Tombol Logout */
         .btn-logout {
-            margin-top: auto; /* Dorong ke paling bawah */
+            margin-top: auto;
             border: 1px solid #ff4d4d;
             color: #ff4d4d;
             background: white;
-            padding: 5px 20px;
+            padding: 8px 20px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+            width: 100%;
             transition: 0.3s;
         }
         .btn-logout:hover {
@@ -106,87 +128,84 @@
         /* --- CONTENT KANAN --- */
         .main-content {
             flex: 1;
-            padding: 40px 60px;
+            padding: 40px 50px;
         }
 
-        /* Header Area (Logo di Kanan) */
+        /* Header Area */
         .header-area {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
+        .page-title { font-size: 2.2rem; font-weight: 700; color: #000; }
+        .brand-logo img { height: 65px; width: auto; object-fit: contain; }
 
-        .page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #000;
-        }
-
-        /* Logo Styling (Reuse yang tadi) */
-        .brand-logo img {
-            height: 60px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        /* Tabs (History / Stok) */
-        .nav-tabs {
-            border-bottom: 2px solid #eee;
-            margin-bottom: 30px;
-        }
-
+        /* TABS Custom Style */
+        .nav-tabs { border-bottom: 2px solid #f0f0f0; margin-bottom: 20px; }
         .nav-link {
             border: none;
-            color: #999;
+            color: #bbb;
             font-weight: 600;
             font-size: 1.2rem;
-            padding-bottom: 10px;
-            margin-right: 30px;
+            padding: 10px 25px;
+            background: transparent;
         }
-
         .nav-link.active {
-            color: #f7941d; /* Warna Orange */
+            color: #f7941d;
             border-bottom: 3px solid #f7941d;
             background: transparent;
         }
+        .nav-link:hover { border-color: transparent; color: #f7941d; }
 
-        /* Table Styling - Minimalis */
-        .table-custom {
-            width: 100%;
-        }
+        /* TABEL DENGAN GARIS VERTIKAL (Sesuai Gambar) */
+        .table-custom { width: 100%; border-collapse: separate; border-spacing: 0; }
 
         .table-custom th {
-            font-weight: 600;
+            font-weight: 700;
             color: #000;
-            border-bottom: 1px solid #eee;
             padding: 15px 10px;
-            font-size: 0.95rem;
+            border-bottom: 1px solid #ddd;
+            /* Garis vertikal ungu tipis di header */
+            border-right: 1px solid rgba(100, 50, 255, 0.1);
         }
 
         .table-custom td {
             padding: 20px 10px;
-            border-bottom: 1px solid #f5f5f5;
+            vertical-align: top;
             color: #555;
-            vertical-align: middle;
             font-size: 0.9rem;
+            /* Garis vertikal ungu tipis di body */
+            border-right: 1px solid rgba(100, 50, 255, 0.1);
         }
 
-        /* Status Badges */
-        .status-text {
-            font-weight: 600;
+        /* Hilangkan border kanan di kolom terakhir */
+        .table-custom th:last-child,
+        .table-custom td:last-child {
+            border-right: none;
+        }
+
+        /* Status Styling */
+        .status-siap {
+            background-color: #f7941d;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .status-selesai {
+            color: #4caf50;
+            font-weight: 700;
+            font-size: 0.9rem;
             text-transform: uppercase;
         }
-        .status-siap { color: #f7941d; } /* Orange */
-        .status-selesai { color: #4caf50; } /* Hijau */
 
-        /* Responsive Mobile */
         @media (max-width: 768px) {
             .dashboard-container { flex-direction: column; }
             .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #eee; }
-            .main-content { padding: 20px; }
-            .header-area { flex-direction: column-reverse; gap: 20px; }
-            .brand-logo { align-self: flex-end; }
+            .header-area { flex-direction: column-reverse; }
+            .table-responsive { overflow-x: auto; }
         }
     </style>
 </head>
@@ -195,26 +214,45 @@
     <div class="dashboard-container">
 
         <aside class="sidebar">
-            <div class="user-avatar">
-                <i class="fa-solid fa-user"></i>
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h4>{{ $shop->name }}</h4>
+                    <p>Admin</p>
+                </div>
             </div>
 
-            <h3 class="user-name">{{ $shop->name }}</h3>
-
-            <div class="balance-label">Tabungan</div>
-            <div class="balance-amount">
-                Rp {{ number_format($shop->balance, 0, ',', '.') }}
+            <div class="balance-section">
+                <div class="balance-label">Tabungan</div>
+                <div class="balance-amount">
+                    Rp {{ number_format($shop->balance, 0, ',', '.') }}
+                </div>
             </div>
 
             <div class="sidebar-menu">
-                <a href="#" class="menu-link" style="color: #999;">Tambah Stok</a>
-                <a href="#" class="menu-link" style="color: #999;">Top Singko</a>
+                <a href="#"><i class="fa-solid fa-plus-circle me-2"></i> Tambah Stok</a>
+            </div>
+
+            @php
+                $topSingko = $transactions->sortByDesc('total')->first();
+            @endphp
+
+            <div class="top-singko-box">
+                <div class="top-singko-title"><i class="fa-solid fa-crown"></i> Top Singko</div>
+                @if($topSingko)
+                    <div class="top-singko-name">{{ $topSingko->cashier_name }}</div> <div class="top-singko-phone">{{ $topSingko->phone }}</div>
+                    <div class="text-dark fw-bold mt-1">Rp {{ number_format($topSingko->total, 0, ',', '.') }}</div>
+                @else
+                    <div class="text-muted small">Belum ada data</div>
+                @endif
             </div>
 
             <form method="POST" action="{{ route('logout') }}" style="margin-top: auto;">
                 @csrf
                 <button type="submit" class="btn btn-logout">
-                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    Logout
                 </button>
             </form>
         </aside>
@@ -224,7 +262,6 @@
             <div class="header-area">
                 <div>
                     </div>
-
                 <a class="brand-logo" href="#">
                     <img src="/images/Logo.png" alt="KADI Logo">
                 </a>
@@ -232,70 +269,74 @@
 
             <h1 class="page-title">Transaksi</h1>
 
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">History</a>
+            <ul class="nav nav-tabs" id="dashboardTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="true">History</button>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Stok</a>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="stok-tab" data-bs-toggle="tab" data-bs-target="#stok" type="button" role="tab" aria-controls="stok" aria-selected="false">Stok</button>
                 </li>
             </ul>
 
             <div class="mb-4 text-muted" style="font-size: 0.9rem;">
-                <i class="fa-regular fa-calendar"></i> 1 Jan 20 - 13 Mar 21
+                <i class="fa-regular fa-calendar me-2"></i> 1 Jan 2020 - 13 Mar 2021
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-custom table-borderless">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Name (Kasir)</th>
-                            <th>Food or Drink</th>
-                            <th>No Telepon</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($transactions as $tx)
-                        <tr>
-                            <td>
-                                {{ $tx->created_at->format('d M Y') }}<br>
-                                <small class="text-muted">{{ $tx->created_at->format('H:i') }}</small>
-                            </td>
+            <div class="tab-content" id="dashboardTabContent">
 
-                            <td>{{ $tx->cashier_name }}</td>
+                <div class="tab-pane fade show active" id="history" role="tabpanel" aria-labelledby="history-tab">
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th style="width: 30%;">Food or Drink</th>
+                                    <th>No Telepon</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($transactions as $tx)
+                                <tr>
+                                    <td>
+                                        {{ $tx->created_at->format('d M Y') }}<br>
+                                        <small class="text-muted">{{ $tx->created_at->format('H:i') }}</small>
+                                    </td>
+                                    <td>{{ $tx->cashier_name }}</td>
+                                    <td>{{ Str::limit($tx->items, 50) }}</td>
+                                    <td>{{ $tx->phone }}</td>
+                                    <td>Rp {{ number_format($tx->total, 0, ',', '.') }}</td>
+                                    <td>
+                                        @if($tx->status === 'SELESAI')
+                                            <span class="status-selesai">SELESAI</span>
+                                        @else
+                                            <span class="status-siap">{{ $tx->status }}?</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">Belum ada data transaksi.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $transactions->links() }}
+                    </div>
+                </div>
 
-                            <td style="max-width: 250px;">
-                                {{ Str::limit($tx->items, 40) }}
-                            </td>
+                <div class="tab-pane fade" id="stok" role="tabpanel" aria-labelledby="stok-tab">
+                    <div class="alert alert-light border text-center p-5">
+                        <h4>📦 Data Stok</h4>
+                        <p class="text-muted">Fitur manajemen stok akan muncul di sini.</p>
+                        <button class="btn btn-warning text-white">Tambah Stok Baru</button>
+                    </div>
+                </div>
 
-                            <td>{{ $tx->phone }}</td>
-
-                            <td>Rp {{ number_format($tx->total, 0, ',', '.') }}</td>
-
-                            <td>
-                                @if($tx->status === 'SELESAI')
-                                    <span class="status-text status-selesai">SELESAI</span>
-                                @else
-                                    <span class="status-text status-siap">{{ $tx->status }}?</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">
-                                Belum ada riwayat transaksi.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="d-flex justify-content-center mt-4">
-                {{ $transactions->links() }}
             </div>
 
         </main>

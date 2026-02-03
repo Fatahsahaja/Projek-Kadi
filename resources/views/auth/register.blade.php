@@ -176,7 +176,7 @@
         <div class="row justify-content-center">
             <div class="login-card row g-0">
 
-                <div class="col-md-5 left-side px-7">
+                <div class="col-md-6 left-side px-7">
                     <div class="circle-decoration circle-1"></div>
                     <div class="circle-decoration circle-2"></div>
 
@@ -185,7 +185,7 @@
                         <p>OUR COMMUNITY</p> </div>
                 </div>
 
-                <div class="col-md-7 right-side">
+                <div class="col-md-6 right-side">
                     <h3 class="login-title">Sign Up</h3>
 
                     <form method="POST" action="{{ route('register') }}">
