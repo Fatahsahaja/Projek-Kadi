@@ -5,6 +5,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ShopController;
 
 // ========================================
 // LANDING PAGE
@@ -29,14 +32,46 @@ Route::middleware(['auth'])->group(function () {
 // CUSTOMER ROUTES
 // ========================================
 Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer.')->group(function () {
+    // Halaman slider warung
     Route::get('/menu', [CustomerController::class, 'menu'])->name('menu');
 });
 
 // ========================================
-// ORDER ROUTES (semua user yang login)
+// SHOP ROUTES (Halaman detail warung)
 // ========================================
 Route::middleware(['auth'])->group(function () {
-    // Halaman Konfirmasi Order
+    // Halaman detail menu per warung (shop-detail.blade.php)
+    Route::get('/shop/{shop_id}', [ShopController::class, 'detail'])->name('shop.detail');
+});
+
+// ========================================
+// PROFILE ROUTES
+// ========================================
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// ========================================
+// CART ROUTES
+// ========================================
+Route::middleware(['auth'])->group(function () {
+    // Tambah item ke keranjang
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+
+    // Lihat isi keranjang
+    Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
+
+    // Hapus item dari keranjang
+    Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+});
+
+// ========================================
+// ORDER ROUTES
+// ========================================
+Route::middleware(['auth'])->group(function () {
+    // Halaman Konfirmasi Order (order-confirm.blade.php)
     Route::get('/order', [OrderController::class, 'show'])->name('order.show');
 
     // Proses Order (simpan ke database)
@@ -50,24 +85,9 @@ Route::middleware(['auth'])->group(function () {
 // TRANSACTION ROUTES
 // ========================================
 Route::middleware(['auth'])->prefix('transactions')->name('transactions.')->group(function () {
-
-    // Lihat detail transaksi (semua role yang login bisa akses, tapi ada manual check di controller)
     Route::get('/{transaction}', [TransactionController::class, 'show'])->name('show');
-
-    // Update status pesanan (hanya admin_kantin dan admin_web)
     Route::patch('/{transaction}/status', [TransactionController::class, 'updateStatus'])
         ->name('update-status')
         ->middleware('role:admin_kantin,admin_web');
-
-    // Cancel pesanan (customer dan admin_kantin bisa akses, ada manual check di controller)
     Route::patch('/{transaction}/cancel', [TransactionController::class, 'cancel'])->name('cancel');
-
-// ========================================
-// VERIFICATION ROUTES
-// ========================================
-Route::get('/verify/{userId}', [VerificationController::class, 'notice'])->name('verification.notice');
-Route::post('/verify/{userId}/phone', [VerificationController::class, 'verifyPhone'])->name('verification.verify-phone');
-Route::get('/verify/{userId}/email/{code}', [VerificationController::class, 'verifyEmail'])->name('verification.verify-email');
-Route::post('/verify/{userId}/resend-phone', [VerificationController::class, 'resendPhone'])->name('verification.resend-phone');
-Route::post('/verify/{userId}/resend-email', [VerificationController::class, 'resendEmail'])->name('verification.resend-email');
 });

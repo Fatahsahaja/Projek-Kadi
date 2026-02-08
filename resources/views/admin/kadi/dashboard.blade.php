@@ -85,7 +85,7 @@
                     @csrf
                     <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
                 </form>
-            </div>  
+            </div>
         <h2>📊 Semua Toko</h2>
         <div class="shops-grid">
             @foreach($shops as $shop)
@@ -119,7 +119,7 @@
                     <td>{{ $tx->phone }}</td>
                     <td><strong>Rp {{ number_format($tx->total, 0, ',', '.') }}</strong></td>
                            <td>
-                    @if($transaction->status === 'pending')
+                    @if($tx->status === 'pending')
                         <form action="{{ route('transactions.updateStatus', $transaction->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('PATCH')
@@ -128,7 +128,7 @@
                                 ✓ Selesai
                             </button>
                         </form>
-                        
+
                         <form action="{{ route('transactions.updateStatus', $transaction->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('PATCH')
@@ -138,8 +138,8 @@
                             </button>
                         </form>
                     @else
-                        <span class="badge badge-{{ $transaction->status === 'completed' ? 'success' : 'secondary' }}">
-                            {{ ucfirst($transaction->status) }}
+                        <span class="badge badge-{{ $tx->status === 'completed' ? 'success' : 'secondary' }}">
+                            {{ ucfirst($tx->status) }}
                         </span>
                     @endif
                 </td>

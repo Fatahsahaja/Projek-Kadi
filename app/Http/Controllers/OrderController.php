@@ -9,22 +9,29 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     /**
-     * Tampilkan halaman konfirmasi order
+     * Tampilkan halaman konfirmasi order (order-confirm.blade.php)
      */
     public function show(Request $request)
     {
-        // Validasi parameter dari URL
-        $validated = $request->validate([
-            'menu' => 'required|string',
-            'harga' => 'required|numeric',
-            'shop_id' => 'required|exists:shops,id',
-        ]);
+        // Ambil data dari session cart
+        $cart = session()->get('cart', []);
 
-        $shop = Shop::find($validated['shop_id']);
+        // Kalo cart kosong, redirect balik ke menu
+        if (empty($cart)) {
+            return redirect()->route('customer.menu')->with('error', 'Keranjang lu kosong bro!');
+        }
 
-        return view('order', [
-            'nama_makanan' => $validated['menu'],
-            'harga' => $validated['harga'],
+        // Hitung total & gabung nama menu
+        $total = array_sum(array_column($cart, 'price'));
+        $menuNames = array_column($cart, 'name');
+        $shop_id = $cart[0]['shop_id'] ?? 1; // Ambil shop_id dari item pertama
+
+        $shop = Shop::findOrFail($shop_id);
+
+        return view('order-confirm', [
+            'cart' => $cart,
+            'nama_makanan' => implode(', ', $menuNames),
+            'harga' => $total,
             'shop' => $shop,
         ]);
     }
@@ -50,11 +57,15 @@ class OrderController extends Controller
             'phone' => auth()->user()->phone,
             'total' => $validated['total'],
             'status' => 'PENDING',
+            'notes' => $validated['notes'] ?? null,
         ]);
 
-        // Update balance toko (opsional)
+        // Update balance toko
         $shop = Shop::find($validated['shop_id']);
         $shop->increment('balance', $validated['total']);
+
+        // PENTING: Hapus cart setelah order berhasil
+        session()->forget('cart');
 
         return redirect()->route('order.success')->with('order_id', $transaction->id);
     }
