@@ -6,6 +6,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KADI - Menu Slider</title>
     <style>
+
+        @media (max-width: 576px) {
+    .navbar {
+        padding: 1rem 1.2rem;
+    }
+
+    .logo {
+        font-size: 2rem;
+    }
+
+    .page-title {
+        font-size: 1.4rem;
+    }
+
+    .subtitle {
+        font-size: 0.8rem;
+    }
+
+    .shop-card {
+        min-width: 260px;
+        padding: 0 15px 20px 15px;
+    }
+
+    .shop-tag {
+        font-size: 0.85rem;
+        padding: 8px 18px;
+    }
+
+    .menu-title {
+        font-size: 1.2rem;
+    }
+
+    .menu-item {
+        font-size: 0.95rem;
+    }
+
+    .btn-order {
+        padding: 8px 30px;
+        font-size: 0.9rem;
+    }
+
+    .user-profile {
+        font-size: 0.85rem;
+    }
+
+    .user-profile span {
+        display: none; /* sembunyiin nama user di HP */
+    }
+
+    .decoration-blob {
+        width: 180px;
+        height: 120px;
+    }
+}
         * {
             margin: 0;
             padding: 0;
@@ -268,55 +322,23 @@
             <button class="nav-btn prev" onclick="scrollSlider(-1)">&#10094;</button>
 
             <div class="shops-grid" id="slider">
-
-                {{-- CARD WARUNG LADESH --}}
-                <div class="shop-card">
-                    <div class="shop-tag">Warung Ladesh</div>
-                    <div class="menu-title">Menu Tersedia</div>
-                    <div class="menu-list">
-                        <div class="menu-item">Es TeaJus ★</div>
-                        <div class="menu-item normal">Gorengan</div>
-                        <div class="menu-item normal">Ayam Goyeng</div>
+                @forelse($shops as $shop)
+                    <div class="shop-card">
+                        <div class="shop-tag">{{ $shop->name }}</div>
+                        <div class="menu-title">Menu Tersedia</div>
+                        <div class="menu-list">
+                            @forelse($shop->products as $product)
+                                <div class="menu-item">{{ $product->name }}</div>
+                            @empty
+                                <div style="color:#ccc; font-size:0.9rem;">Belum ada menu</div>
+                            @endforelse
+                        </div>
+                        <a href="{{ route('shop.detail', ['shop_id' => $shop->id]) }}"
+                            class="btn-order text-decoration-none">Lihat Menu</a>
                     </div>
-                    {{-- LINK KE HALAMAN DETAIL WARUNG (shop-detail.blade.php) --}}
-                    <a href="{{ route('shop.detail', ['shop_id' => 1]) }}"
-                       class="btn-order text-decoration-none">Lihat Menu</a>
-                </div>
-
-                {{-- CARD WARUNG LAINNYA (Dummy) --}}
-                <div class="shop-card">
-                    <div class="shop-tag">Warung Bahagia</div>
-                    <div class="menu-title">Menu Tersedia</div>
-                    <div class="menu-list">
-                        <div class="menu-item">Nasi Goreng</div>
-                        <div class="menu-item normal">Mie Ayam</div>
-                    </div>
-                    <a href="{{ route('shop.detail', ['shop_id' => 2]) }}"
-                       class="btn-order text-decoration-none">Lihat Menu</a>
-                </div>
-
-                <div class="shop-card">
-                    <div class="shop-tag">Warung Jaya</div>
-                    <div class="menu-title">Menu Tersedia</div>
-                    <div class="menu-list">
-                        <div class="menu-item">Sate Ayam</div>
-                        <div class="menu-item normal">Es Campur</div>
-                    </div>
-                    <a href="{{ route('shop.detail', ['shop_id' => 3]) }}"
-                       class="btn-order text-decoration-none">Lihat Menu</a>
-                </div>
-
-                <div class="shop-card">
-                    <div class="shop-tag">Warung Maju</div>
-                    <div class="menu-title">Menu Tersedia</div>
-                    <div class="menu-list">
-                        <div class="menu-item">Bakso</div>
-                        <div class="menu-item normal">Es Teh Manis</div>
-                    </div>
-                    <a href="{{ route('shop.detail', ['shop_id' => 4]) }}"
-                       class="btn-order text-decoration-none">Lihat Menu</a>
-                </div>
-
+                @empty
+                    <div style="color:#999; padding:40px;">Belum ada warung.</div>
+                @endforelse
             </div>
 
             <button class="nav-btn next" onclick="scrollSlider(1)">&#10095;</button>

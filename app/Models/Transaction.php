@@ -16,16 +16,27 @@ class Transaction extends Model
         'items',
         'phone',
         'total',
-        'status'
+        'status',
+        'notes',
+        'confirmation_token',
+        'confirmed_at',
     ];
 
+    protected $casts = [
+        'items' => 'array',      // otomatis decode JSON jadi array
+        'confirmed_at' => 'datetime',
+        'total' => 'decimal:2',
+    ];
+
+    // Relasi ke User
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    // Relasi ke Shop
     public function shop()
     {
         return $this->belongsTo(Shop::class);
     }
-
 }

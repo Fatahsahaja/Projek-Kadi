@@ -4,316 +4,438 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KADI - Kantin Warung Ladesh</title>
-
+    <title>KADI - {{ $shop->name }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
     <style>
-        /* --- CONFIG UTAMA --- */
         :root {
-            --primary-orange: #f7931e;
-            --light-orange: #fff5eb;
+            --orange: #ff9f1c;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #ffffff;
+            background: #fff;
             overflow-x: hidden;
         }
 
-        /* --- NAVBAR CUSTOM --- */
+        /* NAVBAR */
         .navbar-kadi {
             background: white;
             padding: 15px 0;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #f0f0f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .logo-text {
-            font-weight: bold;
-            font-size: 24px;
-            letter-spacing: 2px;
+        .logo-img {
+            height: 55px;
+            width: auto;
+            object-fit: contain;
         }
 
-        .search-box {
-            border: 1px solid var(--primary-orange);
-            border-radius: 5px;
-            padding: 5px 15px;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .search-box input {
-            border: none;
-            outline: none;
-            width: 85%;
-        }
-
-        .search-box i {
-            color: #ccc;
-        }
-
-        /* --- CARD PRODUK --- */
-        .card-menu {
-            border: none;
-            border-radius: 15px;
+        .btn-riwayat {
+            border: 1px solid #f0f0f0;
+            border-radius: 50px;
+            padding: 6px 16px;
+            font-size: 0.82rem;
+            color: #555;
+            text-decoration: none;
             background: white;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s;
+            transition: 0.2s;
+        }
+
+        .btn-riwayat:hover {
+            background: #fff7ed;
+            color: var(--orange);
+            border-color: var(--orange);
+        }
+
+        .badge-cart {
+            background: var(--orange);
+            color: white;
+            font-size: 0.65rem;
+            position: absolute;
+            top: -6px;
+            right: -8px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+        }
+
+        /* HERO */
+        .shop-hero {
+            background: linear-gradient(135deg, #fff7ed, #fff);
+            padding: 40px 0 20px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        /* CARD PRODUK */
+        .card-menu {
+            border: 1px solid #f0f0f0;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.25s, box-shadow 0.25s;
             height: 100%;
-            position: relative;
             overflow: hidden;
         }
 
         .card-menu:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 35px rgba(255, 159, 28, 0.15);
+        }
+
+        .card-img-wrapper {
+            padding: 12px 12px 0;
         }
 
         .card-img-top {
-            height: 180px;
+            height: 170px;
             object-fit: cover;
-            border-radius: 15px 15px 0 0;
+            border-radius: 14px;
+            width: 100%;
         }
 
         .menu-title {
-            color: var(--primary-orange);
             font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .menu-desc {
-            font-size: 0.85rem;
-            color: #6c757d;
-            line-height: 1.4;
-            height: 40px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            font-size: 1rem;
+            color: #222;
+            margin-bottom: 4px;
         }
 
         .menu-price {
-            color: var(--primary-orange);
-            font-weight: bold;
+            color: var(--orange);
+            font-weight: 700;
             font-size: 1.2rem;
-            margin-top: 10px;
         }
 
         .btn-add {
-            border: 1px solid var(--primary-orange);
-            color: var(--primary-orange);
+            border: 1.5px solid var(--orange);
+            color: var(--orange);
+            background: transparent;
             border-radius: 50px;
-            padding: 5px 25px;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-            background: white;
+            padding: 5px 28px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: 0.2s;
         }
 
         .btn-add:hover {
-            background: var(--primary-orange);
+            background: var(--orange);
             color: white;
         }
 
-        .crown-icon {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%) rotate(15deg);
-            font-size: 2.5rem;
-            color: #ffd700;
-            z-index: 10;
-            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+        /* PAGINATION CUSTOM */
+        .pagination-custom {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 40px;
         }
 
+        .page-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1.5px solid #eee;
+            background: white;
+            color: #555;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .page-btn:hover {
+            border-color: var(--orange);
+            color: var(--orange);
+        }
+
+        .page-btn.active {
+            background: var(--orange);
+            color: white;
+            border-color: var(--orange);
+        }
+
+        .page-btn.disabled {
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        .page-btn-nav {
+            padding: 0 18px;
+            height: 38px;
+            border-radius: 50px;
+            border: 1.5px solid #eee;
+            background: white;
+            color: #555;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .page-btn-nav:hover {
+            border-color: var(--orange);
+            color: var(--orange);
+        }
+
+        .page-btn-nav.disabled {
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        /* WAVE DECO */
         .decoration-wave {
             position: fixed;
             bottom: 0;
             left: 0;
-            width: 200px;
-            height: 200px;
-            background: var(--primary-orange);
-            border-radius: 0 100% 0 0;
-            opacity: 0.9;
+            width: 220px;
+            height: 130px;
+            background: var(--orange);
+            border-top-right-radius: 100%;
             z-index: -1;
-        }
-
-        .page-title {
-            font-size: 1.5rem;
-        }
-
-        @media(max-width: 768px) {
-            .page-title {
-                font-size: 1.2rem;
-            }
-
-            .search-box {
-                display: none;
-            }
         }
     </style>
 </head>
 
 <body>
 
-    <nav class="navbar-kadi sticky-top">
+    {{-- NAVBAR --}}
+    <nav class="navbar-kadi">
         <div class="container d-flex align-items-center justify-content-between">
+
+            {{-- Logo --}}
+            <a href="{{ route('customer.menu') }}" class="text-decoration-none">
+                <img src="/images/Logo.png" alt="KADI" class="logo-img">
+            </a>
+
+            {{-- Right side --}}
             <div class="d-flex align-items-center gap-3">
-                <a href="{{ route('customer.menu') }}" class="text-decoration-none">
-                    <div class="logo-text text-dark">
-                        K <i class="bi bi-egg-fried text-warning"></i> DI
-                    </div>
+
+                {{-- Riwayat --}}
+                <a href="{{ route('customer.riwayat') }}" class="btn-riwayat d-flex align-items-center gap-1">
+                    <i class="bi bi-clock-history"></i> <span class="d-none d-sm-inline">Riwayat</span>
                 </a>
-            </div>
 
-            <div class="d-none d-md-block text-center flex-grow-1">
-                <h4 class="m-0"><span class="text-warning">Kantin</span> Warung Ladesh</h4>
-            </div>
+                {{-- Divider --}}
+                <div style="width:1px; height:24px; background:#eee;"></div>
 
-            <div class="d-flex align-items-center gap-3">
-                <div class="search-box d-flex align-items-center d-none d-lg-flex">
-                    <input type="text" placeholder="Maem apa...">
-                    <i class="bi bi-search"></i>
-                </div>
-                <div class="position-relative cursor-pointer" data-bs-toggle="modal" data-bs-target="#modalKeranjang"
-                    style="cursor: pointer;">
-                    <i class="bi bi-cart3 fs-4"></i>
-                    <span
-                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                {{-- Cart --}}
+                <div class="position-relative" data-bs-toggle="modal" data-bs-target="#modalKeranjang"
+                    style="cursor:pointer;">
+                    <i class="bi bi-cart3 fs-5 text-dark"></i>
+                    <span class="position-absolute badge rounded-pill badge-cart">
                         {{ count(session('cart', [])) }}
                     </span>
                 </div>
 
+                {{-- Divider --}}
+                <div style="width:1px; height:24px; background:#eee;"></div>
+
+                {{-- User --}}
                 <div class="d-flex align-items-center gap-2">
-                    <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center"
-                        style="width: 35px; height: 35px;">
+                    <div class="user-avatar">
                         <i class="bi bi-person-fill"></i>
                     </div>
-                    <span class="fw-bold d-none d-sm-block">{{ auth()->user()->name ?? 'Hyuu' }}</span>
+                    <span class="fw-medium d-none d-sm-block" style="font-size:0.85rem;">
+                        {{ auth()->user()->name }}
+                    </span>
                 </div>
+
+                {{-- Logout --}}
+                <form method="POST" action="{{ route('logout') }}" class="d-none d-md-block">
+                    @csrf
+                    <button type="submit"
+                        style="background:none; border:none; color:#ccc; font-size:0.78rem; cursor:pointer;">
+                        Logout
+                    </button>
+                </form>
             </div>
         </div>
     </nav>
 
+    {{-- SHOP HERO --}}
+    <div class="shop-hero">
+        <div class="container">
+            <div class="d-flex align-items-center gap-3">
+                <div
+                    style="width:52px; height:52px; background:#fff7ed; border-radius:14px;
+                        display:flex; align-items:center; justify-content:center; font-size:1.6rem;">
+                    🍽️
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0" style="font-size:1.5rem;">{{ $shop->name }}</h2>
+                    <small class="text-muted">{{ $products->total() }} menu tersedia</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- PRODUK GRID --}}
     <div class="container py-5 mb-5">
 
-        <div class="d-block d-md-none text-center mb-4">
-            <h4 class="fw-bold"><span class="text-warning">Kantin</span> Warung Ladesh</h4>
-        </div>
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4" role="alert">
+                ✅ {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
         <div class="row g-4">
+            @forelse($products as $product)
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card-menu text-center d-flex flex-column h-100">
+                        <div class="card-img-wrapper">
+                            @if ($product->image)
+                                @if (str_starts_with($product->image, '/images/'))
+                                    <img src="{{ asset($product->image) }}" class="card-img-top"
+                                        alt="{{ $product->name }}">
+                                @else
+                                    <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top"
+                                        alt="{{ $product->name }}">
+                                @endif
+                            @else
+                                <div
+                                    style="height:170px; background:#f8f9fa; border-radius:14px;
+                                    display:flex; align-items:center; justify-content:center; color:#ccc; font-size:2rem;">
+                                    🍽️
+                                </div>
+                            @endif
+                        </div>
 
-            <div class="col-12 col-md-4">
-                <div class="card-menu p-3 text-center d-flex flex-column h-100">
-                    <img src="https://via.placeholder.com/300x200?text=Es+TeaJus"
-                        class="card-img-top mx-auto w-75 rounded" alt="TeaJus">
-                    <div class="card-body p-0 pt-3 d-flex flex-column flex-grow-1">
-                        <h5 class="menu-title">Es TeaJus</h5>
-                        <p class="menu-desc">Teh kemasan sachet dengan kombinasi es yang segar.</p>
-                        <div class="mt-auto">
-                            <h4 class="menu-price">3000</h4>
-                            <form action="{{ route('cart.add') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="shop_id" value="1">
-                                <input type="hidden" name="menu" value="Es TeaJus">
-                                <input type="hidden" name="harga" value="3000">
-                                <input type="hidden" name="image"
-                                    value="https://via.placeholder.com/300x200?text=Es+TeaJus">
+                        <div class="card-body p-3 pt-2 d-flex flex-column">
+                            <h5 class="menu-title">{{ $product->name }}</h5>
 
-                                <button type="submit" class="btn btn-add mt-2">Tambah</button>
-                            </form>
+                            @if ($product->stock <= 5 && $product->stock > 0)
+                                <span class="badge rounded-pill mb-2"
+                                    style="background:#fff7ed; color:#f7941d; font-size:0.72rem;">
+                                    Sisa {{ $product->stock }}
+                                </span>
+                            @endif
+
+                            <div class="mt-auto">
+                                <div class="menu-price mb-3">
+                                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                                </div>
+
+                                @if ($product->stock > 0 && $product->is_available)
+                                    <form action="{{ route('cart.add') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                        <button type="submit" class="btn btn-add w-100">+ Tambah</button>
+                                    </form>
+                                @else
+                                    <button class="btn btn-add w-100" disabled
+                                        style="opacity:0.4; cursor:not-allowed;">Habis</button>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-12 col-md-4 position-relative">
-                <div class="crown-icon">
-                    <i class="bi bi-crown"></i>
+            @empty
+                <div class="col-12 text-center py-5">
+                    <div style="font-size:4rem; opacity:0.2;">🍽️</div>
+                    <p class="text-muted mt-3">Belum ada menu tersedia.</p>
                 </div>
-
-                <div class="card-menu p-3 text-center d-flex flex-column h-100 border-warning border border-2">
-                    <img src="https://via.placeholder.com/300x200?text=Gorengan"
-                        class="card-img-top mx-auto w-75 rounded" alt="Gorengan">
-                    <div class="card-body p-0 pt-3 d-flex flex-column flex-grow-1">
-                        <h5 class="menu-title">Gorengan <i class="bi bi-star-fill text-warning fs-6"></i></h5>
-                        <p class="menu-desc">Gorengan hangat cocok untuk pengganjal lapar.</p>
-                        <div class="mt-auto">
-                            <h4 class="menu-price">1000</h4>
-                            <form action="{{ route('cart.add') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="shop_id" value="1">
-                                <input type="hidden" name="menu" value="Gorengan">
-                                <input type="hidden" name="harga" value="1000">
-                                <input type="hidden" name="image"
-                                    value="https://via.placeholder.com/300x200?text=Gorengan">
-
-                                <button type="submit" class="btn btn-add mt-2">Tambah</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4">
-                <div class="card-menu p-3 text-center d-flex flex-column h-100">
-                    <img src="https://via.placeholder.com/300x200?text=Ayam+Goyeng"
-                        class="card-img-top mx-auto w-75 rounded" alt="Ayam">
-                    <div class="card-body p-0 pt-3 d-flex flex-column flex-grow-1">
-                        <h5 class="menu-title">Ayam Goyeng</h5>
-                        <p class="menu-desc">Ayam ayam apa yang lucu? Ayam goyeng.</p>
-                        <div class="mt-auto">
-                            <h4 class="menu-price">8000</h4>
-                            <form action="{{ route('cart.add') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="shop_id" value="1">
-                                <input type="hidden" name="menu" value="Ayam Goyeng">
-                                <input type="hidden" name="harga" value="8000">
-                                <input type="hidden" name="image"
-                                    value="https://via.placeholder.com/300x200?text=Ayam+Goyeng">
-
-                                <button type="submit" class="btn btn-add mt-2">Tambah</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            @endforelse
         </div>
 
-        <div class="d-flex justify-content-center align-items-center mt-5 gap-3 text-secondary">
-            <span>Recent</span>
-            <span class="fw-bold text-dark">1</span>
-            <button class="btn btn-warning btn-sm text-white px-3 rounded-1">Next</button>
-        </div>
+        {{-- PAGINATION CUSTOM --}}
+        @if ($products->hasPages())
+            <div class="pagination-custom">
+
+                {{-- Prev --}}
+                @if ($products->onFirstPage())
+                    <span class="page-btn-nav disabled">
+                        <i class="bi bi-chevron-left"></i> Prev
+                    </span>
+                @else
+                    <a href="{{ $products->previousPageUrl() }}" class="page-btn-nav">
+                        <i class="bi bi-chevron-left"></i> Prev
+                    </a>
+                @endif
+
+                {{-- Angka --}}
+                @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+                    @if ($page == $products->currentPage())
+                        <span class="page-btn active">{{ $page }}</span>
+                    @else
+                        <a href="{{ $url }}" class="page-btn">{{ $page }}</a>
+                    @endif
+                @endforeach
+
+                {{-- Next --}}
+                @if ($products->hasMorePages())
+                    <a href="{{ $products->nextPageUrl() }}" class="page-btn-nav">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                @else
+                    <span class="page-btn-nav disabled">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </span>
+                @endif
+
+            </div>
+        @endif
 
     </div>
 
     <div class="decoration-wave"></div>
 
-    <!-- MODAL KERANJANG (FIXED VERSION) -->
-    <div class="modal fade" id="modalKeranjang" tabindex="-1" aria-labelledby="modalKeranjangLabel" aria-hidden="true">
+    {{-- MODAL KERANJANG --}}
+    <div class="modal fade" id="modalKeranjang" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow rounded-4">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold" id="modalKeranjangLabel">🛒 Keranjang Belanja</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">🛒 Keranjang Belanja</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     @if (session('cart') && count(session('cart')) > 0)
                         <div class="list-group list-group-flush">
                             @foreach (session('cart') as $id => $item)
-                                <div class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
-                                    <div>
-                                        <h6 class="mb-0 fw-bold">{{ $item['name'] }}</h6>
-                                        <small class="text-secondary">Rp {{ number_format($item['price']) }}</small>
+                                <div
+                                    class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 py-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div
+                                            style="width:48px; height:48px; background:#f8f9fa;
+                                            border-radius:10px; overflow:hidden;">
+                                            <img src="{{ isset($item['image']) ? (str_starts_with($item['image'], '/images/') ? asset($item['image']) : asset('storage/' . $item['image'])) : 'https://via.placeholder.com/50' }}"
+                                                class="w-100 h-100 object-fit-cover" alt="">
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;">{{ $item['name'] }}
+                                            </div>
+                                            <small class="text-muted">
+                                                x{{ $item['quantity'] ?? 1 }} ·
+                                                Rp {{ number_format($item['price'], 0, ',', '.') }}
+                                            </small>
+                                        </div>
                                     </div>
                                     <form action="{{ route('cart.remove') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $id }}">
-                                        <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle">
-                                            <i class="bi bi-trash"></i>
+                                        <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle"
+                                            style="width:32px; height:32px; padding:0;">
+                                            <i class="bi bi-trash" style="font-size:0.75rem;"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -321,19 +443,24 @@
                         </div>
 
                         <hr class="my-3">
-                        <div class="d-flex justify-content-between fw-bold mb-3">
-                            <span>Total Bayar:</span>
-                            <span class="text-warning">Rp {{ number_format(array_sum(array_column(session('cart'), 'price'))) }}</span>
+                        <div class="d-flex justify-content-between fw-bold mb-4 fs-6">
+                            <span>Total</span>
+                            <span style="color:var(--orange);">
+                                Rp
+                                {{ number_format(array_sum(array_column(session('cart'), 'subtotal')), 0, ',', '.') }}
+                            </span>
                         </div>
 
-                        {{-- LINK KE HALAMAN KONFIRMASI ORDER --}}
-                        <a href="{{ route('order.show') }}" class="btn btn-warning w-100 text-white fw-bold rounded-pill py-2">
-                            Pesan Sekarang & Bayar
+                        <a href="{{ route('order.show') }}" class="btn w-100 text-white fw-bold rounded-pill py-3"
+                            style="background:var(--orange);">
+                            Pesan Sekarang →
                         </a>
                     @else
-                        <div class="text-center py-4">
-                            <i class="bi bi-cart-x fs-1 text-secondary opacity-50"></i>
-                            <p class="text-secondary mt-2">Keranjang lu masih kosong, bro!</p>
+                        <div class="text-center py-5">
+                            <div style="font-size:3.5rem; opacity:0.2;">🛒</div>
+                            <p class="text-muted mt-3">Keranjang kosong nih!</p>
+                            <button class="btn btn-outline-warning rounded-pill px-4 mt-1"
+                                data-bs-dismiss="modal">Mulai Belanja</button>
                         </div>
                     @endif
                 </div>
@@ -343,7 +470,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Auto buka modal kalau ada session sukses
         @if (session('success'))
             var myModal = new bootstrap.Modal(document.getElementById('modalKeranjang'));
             myModal.show();

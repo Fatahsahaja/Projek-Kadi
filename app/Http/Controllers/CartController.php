@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -14,15 +15,42 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
+        // Validasi product ada dan tersedia
+        $product = Product::findOrFail($request->product_id);
+
+        if (!$product->is_available || $product->stock <= 0) {
+            return redirect()->back()->with('error', 'Maaf, menu ini sudah habis!');
+        }
+
         $cart = session()->get('cart', []);
 
-        // Tambah data ke array session
-        $cart[] = [
-            "name" => $request->menu,
-            "price" => $request->harga,
-            "shop_id" => $request->shop_id,
-            "image" => $request->image
-        ];
+        // Cek kalau item sudah ada di cart, tambah quantity aja
+        $found = false;
+        foreach ($cart as &$item) {
+            if ($item['product_id'] === $product->id) {
+                // Cek stok tidak melebihi yang tersedia
+                if ($item['quantity'] >= $product->stock) {
+                    return redirect()->back()->with('error', 'Stok tidak mencukupi!');
+                }
+                $item['quantity']++;
+                $item['subtotal'] = $item['price'] * $item['quantity'];
+                $found = true;
+                break;
+            }
+        }
+
+        // Kalau belum ada, tambah item baru
+        if (!$found) {
+            $cart[] = [
+                'product_id' => $product->id,
+                'shop_id'    => $product->shop_id,
+                'name'       => $product->name,
+                'price'      => $product->price,
+                'quantity'   => 1,
+                'subtotal'   => $product->price,
+                'image'      => $product->image,
+            ];
+        }
 
         session()->put('cart', $cart);
         return redirect()->back()->with('success', 'Menu ditambah ke keranjang!');
@@ -31,10 +59,14 @@ class CartController extends Controller
     public function remove(Request $request)
     {
         $cart = session()->get('cart', []);
-        if(isset($cart[$request->id])) {
+
+        if (isset($cart[$request->id])) {
             unset($cart[$request->id]);
+            // Re-index array biar tidak bolong
+            $cart = array_values($cart);
             session()->put('cart', $cart);
         }
-        return redirect()->back();
+
+        return redirect()->back()->with('success', 'Item dihapus dari keranjang!');
     }
 }

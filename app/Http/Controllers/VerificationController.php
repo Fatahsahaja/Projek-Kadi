@@ -13,7 +13,7 @@ class VerificationController extends Controller
     public function notice($userId)
     {
         $user = User::findOrFail($userId);
-        
+
         if ($user->isFullyVerified()) {
             return redirect()->route('dashboard')->with('info', 'Akun Anda sudah terverifikasi');
         }

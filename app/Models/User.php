@@ -49,4 +49,9 @@ class User extends Authenticatable
     {
         return $this->phone_verified && $this->email_verified;
     }
+    
+    public function shop()
+{
+    return $this->belongsTo(Shop::class);
+}
 }

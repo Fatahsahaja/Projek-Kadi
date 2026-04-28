@@ -1,49 +1,57 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Shop;
+use Illuminate\Http\Request;
+use App\Models\Product;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
-        
-        // Admin KADI - Lihat semua toko
+
         if ($user->role === 'admin_web') {
-            $shops = Shop::withCount('transactions')
-                ->withSum('transactions', 'total')
-                ->get(); // ✅ Ambil SEMUA toko
-                
-            $transactions = Transaction::with('shop')
-                ->latest()
-                ->paginate(20); // ✅ Ambil SEMUA transaksi
-                
-            return view('admin.kadi.dashboard', compact('shops', 'transactions'));
+            return redirect()->route('admin.kadi.dashboard');
         }
-        
-        // Admin Kantin - Hanya lihat toko sendiri
+
         if ($user->role === 'admin_kantin') {
-            $shop = Shop::find($user->shop_id); // ✅ Hanya toko sendiri
-            
-            if (!$shop) {
-                abort(404, 'Toko tidak ditemukan');
-            }
-            
-            $transactions = Transaction::where('shop_id', $user->shop_id) // ✅ FILTER di sini!
+            $shop = Shop::find($user->shop_id);
+            if (!$shop) abort(404, 'Toko tidak ditemukan');
+
+            $dari  = $request->input('dari',  now()->startOfMonth()->format('Y-m-d'));
+            $sampai = $request->input('sampai', now()->format('Y-m-d'));
+
+            $transactions = Transaction::where('shop_id', $user->shop_id)
+                ->whereDate('created_at', '>=', $dari)
+                ->whereDate('created_at', '<=', $sampai)
                 ->latest()
-                ->paginate(20); // ✅ Hanya transaksi toko sendiri
-                
-            return view('admin.shop.dashboard', compact('shop', 'transactions'));
+                ->paginate(20)
+                ->withQueryString();
+
+            // Kalau AJAX request (polling), return JSON
+            if ($request->ajax()) {
+                return response()->json([
+                    'html' => view(
+                        'admin.shop.partials.transaction-table',
+                        compact('transactions')
+                    )->render(),
+                    'pending_count' => Transaction::where('shop_id', $user->shop_id)
+                        ->where('status', 'PENDING')->count(),
+                ]);
+            }
+
+            $products = Product::where('shop_id', $shop->id)->latest()->get();
+
+            return view('admin.shop.dashboard', compact('shop', 'transactions', 'dari', 'sampai', 'products'));
         }
-        
-        // Customer - redirect ke menu
+
         if ($user->role === 'customer') {
             return redirect()->route('customer.menu');
         }
-        
-        // Default fallback
+
         return redirect('/')->with('error', 'Role tidak dikenali');
     }
 }

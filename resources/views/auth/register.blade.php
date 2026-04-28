@@ -156,18 +156,43 @@
         }
 
         /* Responsive Mobile */
-        @media (max-width: 768px) {
-            .left-side {
-                display: none;
-            }
-            .login-card {
-                max-width: 450px;
-                margin: 0 15px;
-            }
-            .right-side {
-                padding: 2rem;
-            }
-        }
+      @media (max-width: 768px) {
+    body {
+        background: linear-gradient(135deg, #f7931e 0%, #ffc570 100%);
+        padding: 2rem 1rem;
+        align-items: flex-start;
+    }
+
+    .login-card {
+        max-width: 100%;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    }
+
+    .left-side {
+        display: none;
+    }
+
+    .right-side {
+        border-radius: 20px;
+        padding: 2.5rem 1.8rem;
+    }
+
+    .right-side::before {
+        content: 'K✦DI';
+        display: block;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #f7931e;
+        margin-bottom: 1rem;
+        letter-spacing: 3px;
+    }
+
+    .login-title {
+        font-size: 1.5rem;
+    }
+}
     </style>
 </head>
 <body>

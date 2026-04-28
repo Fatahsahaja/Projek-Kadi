@@ -1,96 +1,162 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KADI - Order Berhasil</title>
+    <title>Pesanan Berhasil - KADI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fff5eb 0%, #ffffff 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .success-card {
-            background: white;
-            border-radius: 20px;
-            padding: 50px 40px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        .checkmark {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            animation: pop 0.5s ease-out;
-        }
-        @keyframes pop {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-        h1 {
-            color: #28a745;
-            margin-bottom: 15px;
-        }
-        p {
-            color: #666;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        .order-id {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            font-weight: 600;
-            color: #333;
-        }
-        .btn-back {
-            background: linear-gradient(135deg, #f7931e 0%, #ffad60 100%);
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s;
-        }
-        .btn-back:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(247, 147, 30, 0.3);
         }
     </style>
 </head>
+
 <body>
-    <div class="success-card">
-        <div class="checkmark">✅</div>
-        <h1>Pesanan Berhasil!</h1>
-        <p>Terima kasih! Pesanan kamu sudah kami terima dan sedang diproses.</p>
 
-        @if(isset($order_id))
-        <div class="order-id">
-            Order ID: #{{ $order_id }}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+
+                <div class="card shadow-sm border-0 rounded-4 text-center">
+                    <div class="card-header bg-success text-white py-4 rounded-top-4">
+                        <h3 class="mb-0 fw-bold">🎉 Pesanan Berhasil!</h3>
+                        <p class="mb-0 mt-1 opacity-75">Tunjukkan QR Code ini ke Admin Kantin</p>
+                    </div>
+
+                    <div class="card-body p-4">
+
+                        {{-- QR Code --}}
+                        <div class="bg-light rounded-3 p-3 mb-4 d-inline-block">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data={{ urlencode($qrUrl) }}"
+                                alt="QR Code Pesanan" class="rounded" />
+                        </div>
+                        <div class="mt-2 mb-2">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle"></i>
+                                Tunjukkan QR ini ke admin kantin untuk konfirmasi pesanan
+                            </small>
+                        </div>
+
+                        {{-- Detail Pesanan --}}
+                        <div class="bg-light rounded-3 p-3 mb-3 text-start">
+                            <h6 class="fw-bold mb-3">📋 Detail Pesanan</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">No. Pesanan</span>
+                                <span class="fw-medium">#{{ $transaction->id }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Warung</span>
+                                <span class="fw-medium">{{ $transaction->shop->name }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Total</span>
+                                <span class="fw-bold text-success">Rp
+                                    {{ number_format($transaction->total, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span id="status-badge">
+                                    <span class="badge bg-warning text-dark">{{ $transaction->status }}</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Tambah ini SETELAH div detail pesanan --}}
+                        <div id="confirmed-alert" class="alert alert-success d-none mt-3 fw-bold text-center">
+                            🎉 Pesanan kamu sudah dikonfirmasi oleh Admin Kantin!
+                            <br><small>Silakan ambil pesananmu di warung.</small>
+                        </div>
+
+                        {{-- Items --}}
+                        <div class="bg-light rounded-3 p-3 mb-3 text-start">
+                            <h6 class="fw-bold mb-3">🛒 Item Pesanan</h6>
+                            @php
+                                $items = is_array($transaction->items)
+                                    ? $transaction->items
+                                    : json_decode($transaction->items, true);
+                            @endphp
+                            @foreach ($items as $item)
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>{{ $item['name'] }} <small
+                                            class="text-muted">x{{ $item['quantity'] ?? 1 }}</small></span>
+                                    <span class="fw-medium">Rp
+                                        {{ number_format($item['subtotal'] ?? $item['price'], 0, ',', '.') }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        {{-- Catatan --}}
+                        @if ($transaction->notes)
+                            <div class="alert alert-warning text-start py-2 mb-3">
+                                📝 {{ $transaction->notes }}
+                            </div>
+                        @endif
+
+                        {{-- Tombol --}}
+                        <div class="d-grid gap-2">
+                            <a href="{{ route('dashboard') }}" class="btn btn-primary rounded-3 py-2 fw-bold">
+                                Kembali ke Dashboard
+                            </a>
+                            <a href="{{ route('customer.menu') }}" class="btn btn-outline-secondary rounded-3 py-2">
+                                Pesan Lagi
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
         </div>
-        @endif
-
-        <p style="font-size: 0.9rem; color: #999;">
-            Silakan tunggu pesanan kamu di kantin ya! 😊
-        </p>
-
-        <a href="{{ route('customer.menu') }}" class="btn-back">Kembali ke Menu</a>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const transactionId = {{ $transaction->id }};
+        const checkUrl = "{{ route('order.checkStatus', $transaction->id) }}";
+        let isConfirmed = false;
+
+        function checkOrderStatus() {
+            if (isConfirmed) return;
+
+            fetch(checkUrl, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'SUKSES') {
+                        isConfirmed = true;
+
+                        // Update badge status di halaman
+                        document.getElementById('status-badge').innerHTML =
+                            '<span class="badge bg-success">✅ DIKONFIRMASI</span>';
+
+                        // Tampilkan alert sukses
+                        const alertBox = document.getElementById('confirmed-alert');
+                        alertBox.classList.remove('d-none');
+                        alertBox.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+
+                        // Stop polling
+                        clearInterval(pollingInterval);
+                    }
+                })
+                .catch(err => console.log('Polling error:', err));
+        }
+
+        // Jalankan polling setiap 5 detik
+        const pollingInterval = setInterval(checkOrderStatus, 5000);
+
+        // Jalankan sekali langsung saat load
+        checkOrderStatus();
+    </script>
 </body>
+
 </html>
