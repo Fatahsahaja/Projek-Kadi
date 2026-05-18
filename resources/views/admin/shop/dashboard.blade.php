@@ -520,11 +520,8 @@
                                                     style="width:100%; height:140px; object-fit:cover;">
                                             @endif
                                         @else
-                                            <div
-                                                style="width:100%; height:140px; background:#f8f9fa;
-                                    display:flex; align-items:center; justify-content:center;
-                                    font-size:2.5rem; color:#ddd;">
-                                                🍽️</div>
+                                           <img src="{{ asset('images/default.png' . $product->image) }}"
+                                                    style="width:100%; height:140px; object-fit:cover;">
                                         @endif
 
                                         <div class="p-3">
@@ -546,7 +543,7 @@
                                                     class="btn btn-sm w-100 rounded-3
                                     {{ $product->is_available ? 'btn-success' : 'btn-outline-secondary' }}"
                                                     style="font-size:0.8rem;">
-                                                    {{ $product->is_available ? '✅ Tersedia' : '❌ Nonaktif' }}
+                                                    {{ $product->is_available ? ' Tersedia' : ' Nonaktif' }}
                                                 </button>
                                             </form>
 
@@ -561,7 +558,7 @@
                                         {{ $product->stock }},
                                         {{ $product->is_available ? 1 : 0 }}
                                     )">
-                                                    ✏️ Edit
+                                                     Edit
                                                 </button>
                                                 <form
                                                     action="{{ route('admin.shop.products.destroy', $product->id) }}"
@@ -645,7 +642,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4">
                 <div class="modal-header rounded-top-4" style="background:#f7941d; color:white;">
-                    <h5 class="modal-title fw-bold">✏️ Edit Produk</h5>
+                    <h5 class="modal-title fw-bold"> Edit Produk</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                         style="filter:brightness(0) invert(1);"></button>
                 </div>

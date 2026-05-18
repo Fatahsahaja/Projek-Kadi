@@ -15,14 +15,22 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
-        // Validasi product ada dan tersedia
-        $product = Product::findOrFail($request->product_id);
+        $product = Product::with('shop')->findOrFail($request->product_id);
 
         if (!$product->is_available || $product->stock <= 0) {
             return redirect()->back()->with('error', 'Maaf, menu ini sudah habis!');
         }
 
         $cart = session()->get('cart', []);
+
+        // Cek kalau keranjang sudah ada item dari warung LAIN
+        if (!empty($cart) && $cart[0]['shop_id'] !== $product->shop_id) {
+            $namaWarungLama = $cart[0]['shop_name'] ?? 'warung sebelumnya';
+            return redirect()->back()->with('error',
+                'Keranjangmu masih ada pesanan dari ' . $namaWarungLama . '. ' .
+                'Selesaikan atau kosongkan dulu sebelum pesan dari warung lain.'
+            );
+        }
 
         // Cek kalau item sudah ada di cart, tambah quantity aja
         $found = false;
@@ -44,6 +52,7 @@ class CartController extends Controller
             $cart[] = [
                 'product_id' => $product->id,
                 'shop_id'    => $product->shop_id,
+                'shop_name'  => $product->shop->name ?? '',
                 'name'       => $product->name,
                 'price'      => $product->price,
                 'quantity'   => 1,

@@ -20,6 +20,7 @@ class Transaction extends Model
         'notes',
         'confirmation_token',
         'confirmed_at',
+        'payment_method',
     ];
 
     protected $casts = [

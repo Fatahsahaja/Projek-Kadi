@@ -6,6 +6,7 @@ use App\Models\Transaction;
 use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -28,30 +29,53 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'shop_id' => 'required|exists:shops,id',
-            'items'   => 'required|string',
-            'total'   => 'required|numeric',
-            'notes'   => 'nullable|string',
+            'shop_id'        => 'required|exists:shops,id',
+            'items'          => 'required|string',
+            'total'          => 'required|numeric',
+            'notes'          => 'nullable|string',
+            'payment_method' => 'required|in:saldo,qr',
         ]);
 
-        // Generate token unik untuk QR
-        $token = Str::uuid();
+        $user  = auth()->user();
+        $total = (float) $validated['total'];
 
-        $transaction = Transaction::create([
-            'shop_id'            => $validated['shop_id'],
-            'user_id'            => auth()->id(),
-            'cashier_name'       => auth()->user()->name,
-            'items'              => $validated['items'],
-            'phone'              => auth()->user()->phone,
-            'total'              => $validated['total'],
-            'status'             => 'PENDING',
-            'notes'              => $validated['notes'] ?? null,
-            'confirmation_token' => $token,
-            // ✅ Balance TIDAK diupdate di sini
-            // ✅ Balance diupdate saat admin konfirmasi QR
-        ]);
+        // Cek saldo sebelum masuk DB transaction
+        if ($validated['payment_method'] === 'saldo') {
+            if ($user->balance < $total) {
+                return redirect()->back()
+                    ->with('error', 'Saldo kamu tidak cukup! Saldo saat ini: Rp ' . number_format($user->balance, 0, ',', '.') . '. Silakan isi saldo terlebih dahulu.');
+            }
+        }
 
-        // Hapus cart setelah order
+        $token       = Str::uuid();
+        $transaction = null;
+
+        DB::transaction(function () use ($validated, $user, $total, $token, &$transaction) {
+            $isSaldo      = $validated['payment_method'] === 'saldo';
+            $status       = $isSaldo ? 'SUKSES' : 'PENDING';
+            $confirmedAt  = $isSaldo ? now() : null;
+
+            $transaction = Transaction::create([
+                'shop_id'            => $validated['shop_id'],
+                'user_id'            => $user->id,
+                'cashier_name'       => $user->name,
+                'items'              => $validated['items'],
+                'phone'              => $user->phone,
+                'total'              => $total,
+                'status'             => $status,
+                'notes'              => $validated['notes'] ?? null,
+                'confirmation_token' => $token,
+                'confirmed_at'       => $confirmedAt,
+                'payment_method'     => $validated['payment_method'],
+            ]);
+
+            // Bayar saldo: potong saldo customer + tambah balance warung
+            if ($isSaldo) {
+                $user->decrement('balance', $total);
+                $transaction->shop->increment('balance', $total);
+            }
+        });
+
         session()->forget('cart');
 
         return redirect()->route('order.success')->with('order_id', $transaction->id);

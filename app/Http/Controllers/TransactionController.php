@@ -141,24 +141,44 @@ class TransactionController extends Controller
     // ─────────────────────────────────────────────
     public function cancel(Transaction $transaction)
     {
-        if ($transaction->user_id !== auth()->id()) {
+        $user = auth()->user();
+
+        // Validasi akses: customer hanya bisa cancel miliknya,
+        // admin kantin hanya bisa cancel transaksi di warungnya sendiri
+        if ($user->role === 'customer' && $transaction->user_id !== $user->id) {
             abort(403, 'Bukan pesanan Anda.');
         }
 
-        if ($transaction->status !== 'PENDING') {
+        if ($user->role === 'admin_kantin' && $transaction->shop_id !== $user->shop_id) {
+            abort(403, 'Bukan transaksi warung Anda.');
+        }
+
+        // Hanya PENDING atau SUKSES (bayar saldo) yang bisa dibatalkan
+        if (!in_array($transaction->status, ['PENDING', 'SUKSES'])) {
             return redirect()->back()->with('swal', [
                 'type'  => 'error',
                 'title' => 'Tidak Bisa Dibatalkan!',
-                'text'  => 'Pesanan sudah diproses dan tidak bisa dibatalkan.',
+                'text'  => 'Pesanan sudah selesai atau sudah dibatalkan.',
             ]);
         }
 
-        $transaction->update(['status' => 'SELESAI']);
+        // Kalau bayar saldo & status SUKSES → refund saldo ke customer
+        DB::transaction(function () use ($transaction) {
+            if ($transaction->payment_method === 'saldo' && $transaction->status === 'SUKSES') {
+                $transaction->user->increment('balance', $transaction->total);
+                $transaction->shop->decrement('balance', $transaction->total);
+            }
+            $transaction->update(['status' => 'DIBATALKAN']);
+        });
 
-        return redirect()->route('dashboard')->with('swal', [
+        $pesanRefund = ($transaction->payment_method === 'saldo' && $transaction->status === 'SUKSES')
+            ? ' Saldo Rp ' . number_format($transaction->total, 0, ',', '.') . ' telah dikembalikan ke customer.'
+            : '';
+
+        return redirect()->back()->with('swal', [
             'type'  => 'info',
             'title' => 'Pesanan Dibatalkan',
-            'text'  => 'Pesanan berhasil dibatalkan.',
+            'text'  => 'Pesanan berhasil dibatalkan.' . $pesanRefund,
         ]);
     }
 }

@@ -5,61 +5,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KADI - Menu Slider</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-
         @media (max-width: 576px) {
-    .navbar {
-        padding: 1rem 1.2rem;
-    }
+            .navbar {
+                padding: 1rem 1.2rem;
+            }
 
-    .logo {
-        font-size: 2rem;
-    }
+            .logo {
+                font-size: 2rem;
+            }
 
-    .page-title {
-        font-size: 1.4rem;
-    }
+            .page-title {
+                font-size: 1.4rem;
+            }
 
-    .subtitle {
-        font-size: 0.8rem;
-    }
+            .subtitle {
+                font-size: 0.8rem;
+            }
 
-    .shop-card {
-        min-width: 260px;
-        padding: 0 15px 20px 15px;
-    }
+            .shop-card {
+                min-width: 260px;
+                padding: 0 15px 20px 15px;
+            }
 
-    .shop-tag {
-        font-size: 0.85rem;
-        padding: 8px 18px;
-    }
+            .shop-tag {
+                font-size: 0.85rem;
+                padding: 8px 18px;
+            }
 
-    .menu-title {
-        font-size: 1.2rem;
-    }
+            .menu-title {
+                font-size: 1.2rem;
+            }
 
-    .menu-item {
-        font-size: 0.95rem;
-    }
+            .menu-item {
+                font-size: 0.95rem;
+            }
 
-    .btn-order {
-        padding: 8px 30px;
-        font-size: 0.9rem;
-    }
+            .btn-order {
+                padding: 8px 30px;
+                font-size: 0.9rem;
+            }
 
-    .user-profile {
-        font-size: 0.85rem;
-    }
+            .user-profile {
+                font-size: 0.85rem;
+            }
 
-    .user-profile span {
-        display: none; /* sembunyiin nama user di HP */
-    }
+            .user-profile span {
+                display: none;
+                /* sembunyiin nama user di HP */
+            }
 
-    .decoration-blob {
-        width: 180px;
-        height: 120px;
-    }
-}
+            .decoration-blob {
+                width: 180px;
+                height: 120px;
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -246,6 +248,9 @@
             min-height: 100px;
         }
 
+
+
+
         .menu-item {
             padding: 8px 0;
             color: #ffa726;
@@ -274,6 +279,11 @@
             background: #000;
             color: white;
         }
+        .logo-img {
+            height: 55px;
+            object-fit: contain;
+            width: auto;
+        }
 
         .decoration-blob {
             position: fixed;
@@ -294,22 +304,23 @@
 
     <nav class="navbar">
         <div class="logo">
-            K<span class="coffee-icon">🍴</span>DI
+          <img src="/images/Logo.png" alt="Logo Kadi" class="logo-img">
         </div>
         <div class="user-profile">
-            <div class="avatar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
+            <div
+                style="width:35px;height:35px;background:#f7941d;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <span style="color:white;font-weight:700;font-size:0.9rem;">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                </span>
             </div>
-            <span>{{ auth()->user()->name ?? 'Hyuu' }}</span>
+            <a href="{{ route('customer.profil') }}" style="text-decoration:none;color:inherit;">
+                <span>{{ auth()->user()->name ?? 'User' }}</span>
+            </a>
             <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                 @csrf
-                <button type="submit"
-                    style="background:none; border:none; color:red; cursor:pointer; font-size:0.8rem; margin-left:5px;">(Logout)</button>
+                  <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">Logout</button>
             </form>
+
         </div>
     </nav>
 
@@ -357,6 +368,19 @@
             });
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#f7941d',
+                });
+            });
+        </script>
+    @endif
 </body>
 
 </html>

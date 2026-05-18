@@ -328,17 +328,16 @@
                                     </div>
 
                                     {{-- Toggle Available --}}
-                                    <form action="{{ route('admin.shop.products.toggle', $product->id) }}"
-                                        method="POST" class="mt-2">
+                                    <form action="{{ route('admin.shop.products.destroy', $product->id) }}"
+                                        method="POST" id="deleteForm-{{ $product->id }}">
                                         @csrf
-                                        @method('PATCH')
-                                        <button type="submit"
-                                            class="btn btn-sm w-100 rounded-3
-                                {{ $product->is_available ? 'btn-success' : 'btn-outline-secondary' }}">
-                                            {{ $product->is_available ? '✅ Tersedia' : '❌ Tidak Tersedia' }}
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-3"
+                                            onclick="confirmDelete({{ $product->id }}, '{{ addslashes($product->name) }}')">
+                                            <i class="fas fa-trash"></i>
                                         </button>
-                                    </form>
 
+                                    </form>
                                     {{-- Aksi --}}
                                     <div class="d-flex gap-2 mt-2">
                                         <button class="btn btn-sm btn-outline-warning w-100 rounded-3"
@@ -497,6 +496,22 @@
             // Buka modal
             new bootstrap.Modal(document.getElementById('modalEdit')).show();
         }
+        function confirmDelete(id, name) {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Hapus Produk?',
+        text: name + ' akan dihapus permanen!',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('deleteForm-' + id).submit();
+        }
+    });
+}
     </script>
 </body>
 

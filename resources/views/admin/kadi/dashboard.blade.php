@@ -143,6 +143,11 @@
             border: 1px solid #e2e8f0;
         }
         .shop-stat-card h6 { color: #f7941d; font-weight: 600; margin-bottom: 8px; }
+         .logo-img {
+            height: 55px;
+            object-fit: contain;
+            width: auto;
+        }
     </style>
 </head>
 <body>
@@ -150,21 +155,28 @@
 {{-- SIDEBAR --}}
 <aside class="sidebar">
     <div class="sidebar-brand">
-        <h4>K<span>◆</span>DI</h4>
-        <small style="color:rgba(255,255,255,0.4); font-size:0.75rem;">Super Admin Panel</small>
+      <img src="/images/Logowhite.png" alt="Logo Kadi" class="logo-img">
     </div>
 
     <nav class="sidebar-menu">
-        <a href="{{ route('admin.kadi.dashboard') }}" class="active">
+        <a href="{{ route('admin.kadi.dashboard') }}"
+           class="{{ request()->routeIs('admin.kadi.dashboard') ? 'active' : '' }}">
             <i class="fas fa-chart-pie"></i> Dashboard
         </a>
-        <a href="{{ route('admin.kadi.shops') }}">
+        <a href="{{ route('admin.kadi.shops') }}"
+           class="{{ request()->routeIs('admin.kadi.shops*') ? 'active' : '' }}">
             <i class="fas fa-store"></i> Manajemen Warung
         </a>
-        <a href="{{ route('admin.kadi.transactions') }}">
+        <a href="{{ route('admin.kadi.transactions') }}"
+           class="{{ request()->routeIs('admin.kadi.transactions') ? 'active' : '' }}">
             <i class="fas fa-receipt"></i> Semua Transaksi
         </a>
-        <a href="{{ route('admin.kadi.export.csv') }}">
+        <a href="{{ route('admin.kadi.topup') }}"
+           class="{{ request()->routeIs('admin.kadi.topup') ? 'active' : '' }}">
+            <i class="fas fa-wallet"></i> Manajemen Top Up
+        </a>
+        <a href="{{ route('admin.kadi.export.csv') }}"
+           class="{{ request()->routeIs('admin.kadi.export.csv') ? 'active' : '' }}">
             <i class="fas fa-file-csv"></i> Export CSV
         </a>
     </nav>
@@ -194,7 +206,7 @@
             </div>
             <div>
                 <div style="font-size:0.85rem; font-weight:600;">{{ auth()->user()->name }}</div>
-                <div style="font-size:0.75rem; color:#6b7280;">Super Admin</div>
+                <div style="font-size:0.75rem; color:#6b7280;">Admin KADI</div>
             </div>
         </div>
     </div>
@@ -234,15 +246,24 @@
     {{-- GRAFIK + WARUNG --}}
     <div class="row g-4 mb-4">
 
-        {{-- Grafik --}}
+        {{-- Grafik Transaksi --}}
         <div class="col-lg-8">
-            <div class="card-custom">
-                <div class="card-header">
-                    <i class="fas fa-chart-line me-2 text-warning"></i>
-                    Transaksi 7 Hari Terakhir
+            <div class="card-custom mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-chart-bar me-2 text-warning"></i> Jumlah Transaksi 7 Hari Terakhir</span>
+                    <small class="text-muted">per hari</small>
                 </div>
                 <div class="card-body">
-                    <canvas id="grafikTransaksi" height="100"></canvas>
+                    <canvas id="grafikTransaksi" height="120"></canvas>
+                </div>
+            </div>
+            <div class="card-custom">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-chart-line me-2 text-warning"></i> Pendapatan 7 Hari Terakhir</span>
+                    <small class="text-muted">dalam Rupiah</small>
+                </div>
+                <div class="card-body">
+                    <canvas id="grafikPendapatan" height="120"></canvas>
                 </div>
             </div>
         </div>
@@ -299,42 +320,82 @@
 
 {{-- Chart.js Grafik --}}
 <script>
-    const labels = @json($grafik->pluck('tanggal'));
+    const labels        = @json($grafik->pluck('tanggal'));
     const dataTransaksi = @json($grafik->pluck('total_transaksi'));
     const dataPendapatan = @json($grafik->pluck('total_pendapatan'));
 
+    // ── BAR CHART: Jumlah Transaksi ──
     new Chart(document.getElementById('grafikTransaksi'), {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: labels,
-            datasets: [
-                {
-                    label: 'Jumlah Transaksi',
-                    data: dataTransaksi,
-                    borderColor: '#f7941d',
-                    backgroundColor: 'rgba(247,148,29,0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    yAxisID: 'y'
-                },
-                {
-                    label: 'Total Pendapatan (Rp)',
-                    data: dataPendapatan,
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59,130,246,0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    yAxisID: 'y1'
-                }
-            ]
+            datasets: [{
+                label: 'Jumlah Transaksi',
+                data: dataTransaksi,
+                backgroundColor: 'rgba(247,148,29,0.85)',
+                borderColor: '#f7941d',
+                borderWidth: 0,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
         },
         options: {
             responsive: true,
-            interaction: { mode: 'index', intersect: false },
-            plugins: { legend: { position: 'top' } },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ` ${ctx.parsed.y} transaksi`
+                    }
+                }
+            },
             scales: {
-                y:  { type: 'linear', display: true, position: 'left' },
-                y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false } }
+                x: { grid: { display: false } },
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1, precision: 0 },
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                }
+            }
+        }
+    });
+
+    // ── LINE CHART: Pendapatan ──
+    new Chart(document.getElementById('grafikPendapatan'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Pendapatan',
+                data: dataPendapatan,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59,130,246,0.08)',
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#3b82f6',
+                pointRadius: 5,
+                pointHoverRadius: 7,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ` Rp ${ctx.parsed.y.toLocaleString('id-ID')}`
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { display: false } },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: {
+                        callback: val => 'Rp ' + val.toLocaleString('id-ID')
+                    }
+                }
             }
         }
     });

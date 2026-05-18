@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Models\NisTemplate;
 
 class RegisteredUserController extends Controller
 {
@@ -31,15 +32,24 @@ class RegisteredUserController extends Controller
 {
     $request->validate([
         'name'     => ['required', 'string', 'max:255'],
+        'nis'      => ['nullable', 'string', 'exists:nis_templates,nis'], // ← cek ke tabel template
         'phone'    => ['required', 'string', 'max:20'], // tambah ini
         'email'    => ['nullable', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
         'password' => ['required', 'confirmed', Rules\Password::defaults()],
     ]);
 
+     $nisData = null;
+    if ($request->nis) {
+        $nisData = NisTemplate::where('nis', $request->nis)->first();
+    }
+
     $user = User::create([
         'name'     => $request->name,
-        'phone'    => $request->phone, // tambah ini
-        'email'    => $request->email,
+        'nis'      => $request->nis ?? null,
+        'kelas'    => $nisData?->kelas ?? null,
+        'jurusan'  => $nisData?->jurusan ?? null,
+        'phone'    => $request->phone,
+        'email'    => $request->phone . '@kadi.local',
         'password' => Hash::make($request->password),
         'role'     => 'customer',
     ]);
@@ -47,7 +57,6 @@ class RegisteredUserController extends Controller
     event(new Registered($user));
 
     Auth::login($user);
-
     return redirect(route('dashboard', absolute: false));
 }
 }

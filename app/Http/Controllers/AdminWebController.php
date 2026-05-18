@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\TopupRequest;
+use App\Models\RefundRequest;
 use Illuminate\Support\Facades\DB;
 
 class AdminWebController extends Controller
@@ -48,6 +50,40 @@ class AdminWebController extends Controller
         ));
     }
 
+    public function topupIndex(Request $request)
+    {
+        // ── DATA TOPUP ──
+        $topupQuery = TopupRequest::with('user')->latest();
+        if ($request->topup_status) {
+            $topupQuery->where('status', $request->topup_status);
+        }
+        $topups        = $topupQuery->paginate(15, ['*'], 'topup_page');
+        $pendingCount  = TopupRequest::where('status', 'PENDING')->count();
+        $approvedCount = TopupRequest::where('status', 'APPROVED')->count();
+        $rejectedCount = TopupRequest::where('status', 'REJECTED')->count();
+        $totalApproved = TopupRequest::where('status', 'APPROVED')->sum('amount');
+
+        // ── DATA REFUND ──
+        $refundQuery = RefundRequest::with('user')->latest();
+        if ($request->refund_status) {
+            $refundQuery->where('status', $request->refund_status);
+        }
+        $refunds             = $refundQuery->paginate(15, ['*'], 'refund_page');
+        $refundPendingCount  = RefundRequest::where('status', 'PENDING')->count();
+        $refundApprovedCount = RefundRequest::where('status', 'APPROVED')->count();
+        $refundRejectedCount = RefundRequest::where('status', 'REJECTED')->count();
+        $totalRefunded       = RefundRequest::where('status', 'APPROVED')->sum('amount');
+
+        $activeTab = $request->tab === 'refund' ? 'refund' : 'topup';
+
+        return view('admin.kadi.topup', compact(
+            'topups', 'pendingCount', 'approvedCount', 'rejectedCount', 'totalApproved',
+            'refunds', 'refundPendingCount', 'refundApprovedCount', 'refundRejectedCount', 'totalRefunded',
+            'activeTab'
+        ));
+    }
+
+
     // ─────────────────────────────────────────────
     // MANAJEMEN WARUNG
     // ─────────────────────────────────────────────
@@ -56,6 +92,24 @@ class AdminWebController extends Controller
         $shops = Shop::with('users')->withCount('transactions')->get();
         return view('admin.kadi.shops', compact('shops'));
     }
+    // Halaman warung yang sudah dihapus
+public function trashedShops()
+{
+    $shops = Shop::onlyTrashed()->with('users')->get();
+    return view('admin.kadi.shops-trashed', compact('shops'));
+}
+
+// Restore warung
+public function restoreShop($id)
+{
+    Shop::withTrashed()->findOrFail($id)->restore();
+
+    return redirect()->route('admin.kadi.shops.trashed')->with('swal', [
+        'type'  => 'success',
+        'title' => 'Berhasil!',
+        'text'  => 'Warung berhasil dipulihkan.',
+    ]);
+}
 
     public function createShop()
     {

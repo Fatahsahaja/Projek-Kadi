@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,19 +14,21 @@
         body {
             background-color: #f0f2f5;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh; /* Pakai min-height biar bisa di-scroll kalau layar pendek */
+            min-height: 100vh;
+            /* Pakai min-height biar bisa di-scroll kalau layar pendek */
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0;
-            padding: 2rem 0; /* Tambah padding atas bawah agar tidak mepet */
+            padding: 2rem 0;
+            /* Tambah padding atas bawah agar tidak mepet */
         }
 
         /* Container Card Utama */
         .login-card {
             background: #fff;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             width: 100%;
             max-width: 900px;
@@ -44,7 +47,8 @@
             color: white;
             text-align: center;
             overflow: hidden;
-            min-height: 600px; /* Sedikit lebih tinggi karena form register panjang */
+            min-height: 600px;
+            /* Sedikit lebih tinggi karena form register panjang */
         }
 
         /* Dekorasi Lingkaran */
@@ -53,12 +57,14 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
         }
+
         .circle-1 {
             width: 300px;
             height: 300px;
             top: -80px;
             right: -80px;
         }
+
         .circle-2 {
             width: 200px;
             height: 200px;
@@ -70,8 +76,9 @@
             font-weight: 800;
             font-size: 2.5rem;
             margin-bottom: 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .welcome-text p {
             font-weight: 300;
             letter-spacing: 2px;
@@ -102,7 +109,8 @@
             border: none;
             border-radius: 0;
             border-left: 4px solid #f7931e;
-            padding: 12px 15px; /* Sedikit padding lebih besar */
+            padding: 12px 15px;
+            /* Sedikit padding lebih besar */
             margin-bottom: 1rem;
             color: #555;
             transition: all 0.3s;
@@ -147,54 +155,57 @@
             font-size: 0.9rem;
             text-decoration: none;
         }
+
         .link-text span {
             color: #f7931e;
             font-weight: 600;
         }
+
         .link-text:hover span {
             text-decoration: underline;
         }
 
         /* Responsive Mobile */
-      @media (max-width: 768px) {
-    body {
-        background: linear-gradient(135deg, #f7931e 0%, #ffc570 100%);
-        padding: 2rem 1rem;
-        align-items: flex-start;
-    }
+        @media (max-width: 768px) {
+            body {
+                background: linear-gradient(135deg, #f7931e 0%, #ffc570 100%);
+                padding: 2rem 1rem;
+                align-items: flex-start;
+            }
 
-    .login-card {
-        max-width: 100%;
-        border-radius: 20px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-    }
+            .login-card {
+                max-width: 100%;
+                border-radius: 20px;
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            }
 
-    .left-side {
-        display: none;
-    }
+            .left-side {
+                display: none;
+            }
 
-    .right-side {
-        border-radius: 20px;
-        padding: 2.5rem 1.8rem;
-    }
+            .right-side {
+                border-radius: 20px;
+                padding: 2.5rem 1.8rem;
+            }
 
-    .right-side::before {
-        content: 'K✦DI';
-        display: block;
-        text-align: center;
-        font-size: 2rem;
-        font-weight: 800;
-        color: #f7931e;
-        margin-bottom: 1rem;
-        letter-spacing: 3px;
-    }
+            .right-side::before {
+                content: 'K✦DI';
+                display: block;
+                text-align: center;
+                font-size: 2rem;
+                font-weight: 800;
+                color: #f7931e;
+                margin-bottom: 1rem;
+                letter-spacing: 3px;
+            }
 
-    .login-title {
-        font-size: 1.5rem;
-    }
-}
+            .login-title {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -207,7 +218,8 @@
 
                     <div class="welcome-text position-relative z-1">
                         <h2>JOIN</h2>
-                        <p>OUR COMMUNITY</p> </div>
+                        <p>OUR COMMUNITY</p>
+                    </div>
                 </div>
 
                 <div class="col-md-6 right-side">
@@ -217,57 +229,45 @@
                         @csrf
 
                         <div class="form-group">
-                            <input type="text"
-                                   class="form-control form-custom @error('name') is-invalid @enderror"
-                                   name="name"
-                                   placeholder="Nama Lengkap"
-                                   value="{{ old('name') }}"
-                                   required autofocus>
+                            <input type="text" class="form-control form-custom @error('name') is-invalid @enderror"
+                                name="name" placeholder="Nama Lengkap" value="{{ old('name') }}" required
+                                autofocus>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <input type="text"
-                                   class="form-control form-custom @error('phone') is-invalid @enderror"
-                                   name="phone"
-                                   placeholder="No Telepon"
-                                   value="{{ old('phone') }}"
-                                   required>
+                            <input type="text" class="form-control form-custom @error('phone') is-invalid @enderror"
+                                name="phone" placeholder="No Telepon" value="{{ old('phone') }}" required>
                             @error('phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <input type="email"
-                                   class="form-control form-custom @error('email') is-invalid @enderror"
-                                   name="email"
-                                   placeholder="Email Address"
-                                   value="{{ old('email') }}">
-                            @error('email')
+                            <input type="text" class="form-control form-custom @error('nis') is-invalid @enderror"
+                                name="nis" placeholder="NIS (Opsional — isi jika tahu)" value="{{ old('nis') }}">
+                            @error('nis')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            <small class="text-muted" style="font-size:0.75rem;">
+                                💡 NIS digunakan untuk menampilkan data kelas & jurusan kamu
+                            </small>
                         </div>
 
                         <div class="form-group">
                             <input type="password"
-                                   class="form-control form-custom @error('password') is-invalid @enderror"
-                                   name="password"
-                                   placeholder="Password"
-                                   required>
+                                class="form-control form-custom @error('password') is-invalid @enderror" name="password"
+                                placeholder="Password" required>
                             @error('password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <input type="password"
-                                   class="form-control form-custom"
-                                   name="password_confirmation"
-                                   placeholder="Konfirmasi Password"
-                                   required>
+                            <input type="password" class="form-control form-custom" name="password_confirmation"
+                                placeholder="Konfirmasi Password" required>
                         </div>
 
                         <input type="hidden" name="role" value="customer">
@@ -288,4 +288,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

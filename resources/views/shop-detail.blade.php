@@ -35,23 +35,6 @@
             object-fit: contain;
         }
 
-        .btn-riwayat {
-            border: 1px solid #f0f0f0;
-            border-radius: 50px;
-            padding: 6px 16px;
-            font-size: 0.82rem;
-            color: #555;
-            text-decoration: none;
-            background: white;
-            transition: 0.2s;
-        }
-
-        .btn-riwayat:hover {
-            background: #fff7ed;
-            color: var(--orange);
-            border-color: var(--orange);
-        }
-
         .badge-cart {
             background: var(--orange);
             color: white;
@@ -230,13 +213,9 @@
             {{-- Right side --}}
             <div class="d-flex align-items-center gap-3">
 
-                {{-- Riwayat --}}
-                <a href="{{ route('customer.riwayat') }}" class="btn-riwayat d-flex align-items-center gap-1">
-                    <i class="bi bi-clock-history"></i> <span class="d-none d-sm-inline">Riwayat</span>
-                </a>
 
                 {{-- Divider --}}
-                <div style="width:1px; height:24px; background:#eee;"></div>
+
 
                 {{-- Cart --}}
                 <div class="position-relative" data-bs-toggle="modal" data-bs-target="#modalKeranjang"
@@ -252,22 +231,22 @@
 
                 {{-- User --}}
                 <div class="d-flex align-items-center gap-2">
-                    <div class="user-avatar">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
-                    <span class="fw-medium d-none d-sm-block" style="font-size:0.85rem;">
-                        {{ auth()->user()->name }}
-                    </span>
+                    <div
+                style="width:35px;height:35px;background:#f7941d;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <span style="color:white;font-weight:700;font-size:0.9rem;">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                </span>
+            </div>
+                   <a href="{{ route('customer.profil') }}" style="text-decoration:none;color:inherit;">
+                <span>{{ auth()->user()->name ?? 'User' }}</span>
+            </a>
                 </div>
 
                 {{-- Logout --}}
-                <form method="POST" action="{{ route('logout') }}" class="d-none d-md-block">
-                    @csrf
-                    <button type="submit"
-                        style="background:none; border:none; color:#ccc; font-size:0.78rem; cursor:pointer;">
-                        Logout
-                    </button>
-                </form>
+                <form method="POST" action="{{ route('logout') }}" style="display:inline;">
+                @csrf
+                  <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">Logout</button>
+            </form>
             </div>
         </div>
     </nav>
@@ -299,6 +278,13 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-4" role="alert">
+                ⚠️ {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
         <div class="row g-4">
             @forelse($products as $product)
                 <div class="col-6 col-md-4 col-lg-3">
@@ -313,11 +299,8 @@
                                         alt="{{ $product->name }}">
                                 @endif
                             @else
-                                <div
-                                    style="height:170px; background:#f8f9fa; border-radius:14px;
-                                    display:flex; align-items:center; justify-content:center; color:#ccc; font-size:2rem;">
-                                    🍽️
-                                </div>
+                                <img src="{{ asset('images/default.png' . $product->image) }}" class="card-img-top"
+                                        alt="{{ $product->name }}">
                             @endif
                         </div>
 
@@ -470,7 +453,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        @if (session('success'))
+        @if (session('error'))
+            // Ada error → scroll ke alert, jangan buka modal
+            document.querySelector('.alert-danger')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        @elseif (session('success'))
             var myModal = new bootstrap.Modal(document.getElementById('modalKeranjang'));
             myModal.show();
         @endif

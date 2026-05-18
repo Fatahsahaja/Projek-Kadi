@@ -125,13 +125,15 @@
                 <span class="fw-bold">#{{ $tx->id }}</span>
                 <span class="text-muted ms-2" style="font-size:0.85rem;">{{ $tx->shop->name }}</span>
             </div>
-            @if($tx->status === 'PENDING')
-                <span class="status-pending">⏳ PENDING</span>
-            @elseif($tx->status === 'SUKSES')
-                <span class="status-sukses">✅ SUKSES</span>
-            @else
-                <span class="status-selesai">📦 SELESAI</span>
-            @endif
+           @if($tx->status === 'PENDING')
+    <span class="status-pending">⏳ PENDING</span>
+@elseif($tx->status === 'SUKSES')
+    <span class="status-sukses">✅ SUKSES</span>
+@elseif($tx->status === 'SELESAI')
+    <span class="status-selesai">📦 SELESAI</span>
+@elseif($tx->status === 'DIBATALKAN')
+    <span style="background:#fef2f2;color:#ef4444;padding:4px 12px;border-radius:6px;font-size:0.8rem;font-weight:600;">❌ DIBATALKAN</span>
+@endif
         </div>
 
         {{-- Items --}}
@@ -153,11 +155,20 @@
                 <small class="text-muted ms-2">{{ $tx->created_at->format('d M Y H:i') }}</small>
             </div>
             @if($tx->confirmation_token)
-            <a href="{{ route('transactions.confirmByQR', $tx->confirmation_token) }}"
-               class="btn btn-sm btn-outline-warning rounded-pill px-3">
-                Detail
-            </a>
-            @endif
+<div class="d-flex gap-2">
+    <a href="{{ route('transactions.confirmByQR', $tx->confirmation_token) }}"
+       class="btn btn-sm btn-outline-warning rounded-pill px-3">
+        Detail
+    </a>
+    @if($tx->status === 'PENDING')
+    <button type="button"
+        class="btn btn-sm btn-outline-danger rounded-pill px-3"
+        onclick="confirmCancel({{ $tx->id }})">
+        Batalkan
+    </button>
+    @endif
+</div>
+@endif
         </div>
     </div>
     @empty
@@ -179,5 +190,48 @@
 
 <div class="decoration-wave"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function confirmCancel(id) {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Batalkan Pesanan?',
+        text: 'Pesanan ini akan dibatalkan dan tidak bisa dikembalikan.',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Ya, Batalkan!',
+        cancelButtonText: 'Tidak',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('cancelForm-' + id).submit();
+        }
+    });
+}
+</script>
+
+@foreach($transactions as $tx)
+@if($tx->status === 'PENDING')
+<form id="cancelForm-{{ $tx->id }}"
+      action="{{ route('transactions.cancel', $tx->id) }}"
+      method="POST" style="display:none;">
+    @csrf
+    @method('PATCH')
+</form>
+@endif
+@endforeach
+
+@if(session('swal'))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: "{{ session('swal.type') }}",
+            title: "{{ session('swal.title') }}",
+            text: "{{ session('swal.text') }}",
+            confirmButtonColor: "#f7941d",
+        });
+    });
+</script>
+@endif
 </body>
 </html>

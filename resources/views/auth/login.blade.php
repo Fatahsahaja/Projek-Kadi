@@ -234,13 +234,13 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf <div class="form-group">
                             <input type="text"
-                                   class="form-control form-custom @error('email') is-invalid @enderror"
-                                   name="email"
+                                   class="form-control form-custom @error('phone') is-invalid @enderror"
+                                   name="phone"
                                    placeholder="No Telepon"
                                    required
                                    autofocus>
 
-                            @error('email')
+                            @error('phone')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

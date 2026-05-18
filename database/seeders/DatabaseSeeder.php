@@ -10,7 +10,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             ShopSeeder::class,    // HARUS PERTAMA!
-            UserSeeder::class,     // Kedua (karena butuh shop_id)
+            UserSeeder::class,
+             ProductSeeder::class,     // Kedua (karena butuh shop_id)
+               NisTemplateSeeder::class,
         ]);
     }
 }

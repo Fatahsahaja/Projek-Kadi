@@ -77,7 +77,7 @@
                         </div>
 
                         <!-- Form Submit Order -->
-                        <form action="{{ route('order.store') }}" method="POST">
+                        <form action="{{ route('order.store') }}" method="POST" id="order-form">
                             @csrf
                             <input type="hidden" name="shop_id" value="{{ $shop->id }}">
                             <input type="hidden" name="items" value="{{ json_encode($cart) }}">
@@ -91,6 +91,67 @@
                                 <textarea name="notes" class="form-control border-2" rows="3"
                                     placeholder="Contoh: Pedes dikit ya, ga pake cabe..."></textarea>
                             </div>
+
+                            {{-- Pilihan Metode Bayar --}}
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-wallet2 text-warning"></i> Metode Pembayaran
+                                </label>
+
+                                {{-- Saldo --}}
+                                <div class="form-check border rounded-3 p-3 mb-2"
+                                     id="opt-saldo"
+                                     style="cursor:pointer; border-color:#dee2e6 !important;"
+                                     onclick="selectMetode('saldo')">
+                                    <input class="form-check-input" type="radio"
+                                           name="payment_method" value="saldo"
+                                           id="pay-saldo" required>
+                                    <label class="form-check-label w-100" for="pay-saldo" style="cursor:pointer;">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="fw-bold">💰 Bayar Pakai Saldo</span><br>
+                                                <small class="text-muted">
+                                                    Saldo kamu:
+                                                    <span class="fw-bold text-success">
+                                                        Rp {{ number_format(auth()->user()->balance, 0, ',', '.') }}
+                                                    </span>
+                                                </small>
+                                            </div>
+                                            @if(auth()->user()->balance >= $total)
+                                                <span class="badge bg-success">Cukup ✓</span>
+                                            @else
+                                                <span class="badge bg-danger">Tidak Cukup</span>
+                                            @endif
+                                        </div>
+                                    </label>
+                                </div>
+
+                                {{-- QR / Tunai --}}
+                                <div class="form-check border rounded-3 p-3"
+                                     id="opt-qr"
+                                     style="cursor:pointer; border-color:#dee2e6 !important;"
+                                     onclick="selectMetode('qr')">
+                                    <input class="form-check-input" type="radio"
+                                           name="payment_method" value="qr"
+                                           id="pay-qr">
+                                    <label class="form-check-label w-100" for="pay-qr" style="cursor:pointer;">
+                                        <span class="fw-bold">💵 Bayar Cash (di Kasir)</span><br>
+                                        <small class="text-muted">Bayar langsung ke admin kantin saat ambil pesanan</small>
+                                    </label>
+                                </div>
+                            </div>
+
+                            @if($errors->any())
+                                <div class="alert alert-danger mb-3">
+                                    {{ $errors->first() }}
+                                </div>
+                            @endif
+
+                            @if(session('error'))
+                                <div class="alert alert-danger mb-3">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
 
                             <!-- Tombol Bayar -->
                             <button type="submit"
@@ -115,6 +176,26 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function selectMetode(metode) {
+    document.getElementById('pay-saldo').checked = metode === 'saldo';
+    document.getElementById('pay-qr').checked    = metode === 'qr';
+
+    // Highlight border yang dipilih
+    document.getElementById('opt-saldo').style.borderColor = metode === 'saldo' ? '#f7941d' : '#dee2e6';
+    document.getElementById('opt-qr').style.borderColor    = metode === 'qr'    ? '#f7941d' : '#dee2e6';
+}
+
+// Validasi: pastikan metode sudah dipilih sebelum submit
+document.getElementById('order-form').addEventListener('submit', function(e) {
+    const selected = document.querySelector('input[name="payment_method"]:checked');
+    if (!selected) {
+        e.preventDefault();
+        alert('Pilih metode pembayaran terlebih dahulu!');
+    }
+});
+</script>
 </body>
+
 
 </html>

@@ -24,6 +24,8 @@ class User extends Authenticatable
         'email_verification_code',
         'phone_verification_sent_at',
         'email_verification_sent_at',
+        'name', 'nis', 'kelas', 'jurusan', 'balance',
+        'email', 'phone', 'password', 'role', 'shop_id',
     ];
 
     protected $hidden = [
@@ -49,7 +51,7 @@ class User extends Authenticatable
     {
         return $this->phone_verified && $this->email_verified;
     }
-    
+
     public function shop()
 {
     return $this->belongsTo(Shop::class);

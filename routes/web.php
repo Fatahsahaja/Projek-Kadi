@@ -11,6 +11,8 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AdminWebController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminKantinController;
+use App\Http\Controllers\TopupController;
+use App\Http\Controllers\RefundController;
 
 // ========================================
 // LANDING PAGE
@@ -35,7 +37,11 @@ Route::middleware(['auth'])->group(function () {
 // CUSTOMER ROUTES
 // ========================================
 Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer.')->group(function () {
-    Route::get('/menu', [CustomerController::class, 'menu'])->name('menu');
+    Route::get('/menu',   [CustomerController::class, 'menu'])->name('menu');
+    Route::get('/profil', [CustomerController::class, 'profil'])->name('profil');
+    Route::get('/topup',  [TopupController::class, 'index'])->name('topup');
+    Route::post('/topup', [TopupController::class, 'store'])->name('topup.store');
+    Route::post('/refund', [RefundController::class, 'store'])->name('refund.store');
 });
 
 // ========================================
@@ -86,18 +92,29 @@ Route::middleware(['auth', 'role:admin_web'])->prefix('admin/kadi')->name('admin
     Route::get('/dashboard', [AdminWebController::class, 'dashboard'])->name('dashboard');
 
     // Manajemen Warung
-    Route::get('/shops', [AdminWebController::class, 'shops'])->name('shops');
-    Route::get('/shops/create', [AdminWebController::class, 'createShop'])->name('shops.create');
-    Route::post('/shops', [AdminWebController::class, 'storeShop'])->name('shops.store');
-    Route::get('/shops/{shop}/edit', [AdminWebController::class, 'editShop'])->name('shops.edit');
-    Route::patch('/shops/{shop}', [AdminWebController::class, 'updateShop'])->name('shops.update');
-    Route::delete('/shops/{shop}', [AdminWebController::class, 'deleteShop'])->name('shops.delete');
+    Route::get('/shops',              [AdminWebController::class, 'shops'])->name('shops');
+    Route::get('/shops/create',       [AdminWebController::class, 'createShop'])->name('shops.create');
+    Route::get('/shops/trashed',      [AdminWebController::class, 'trashedShops'])->name('shops.trashed');
+    Route::patch('/shops/{id}/restore', [AdminWebController::class, 'restoreShop'])->name('shops.restore');
+    Route::post('/shops',             [AdminWebController::class, 'storeShop'])->name('shops.store');
+    Route::get('/shops/{shop}/edit',  [AdminWebController::class, 'editShop'])->name('shops.edit');
+    Route::patch('/shops/{shop}',     [AdminWebController::class, 'updateShop'])->name('shops.update');
+    Route::delete('/shops/{shop}',    [AdminWebController::class, 'deleteShop'])->name('shops.delete');
 
     // Transaksi
     Route::get('/transactions', [AdminWebController::class, 'transactions'])->name('transactions');
 
     // Export
     Route::get('/export/csv', [AdminWebController::class, 'exportCsv'])->name('export.csv');
+
+    // Top up management (admin web)
+    Route::get('/topup',                          [AdminWebController::class, 'topupIndex'])->name('topup');
+    Route::post('/topup/{topupRequest}/approve',  [TopupController::class, 'approve'])->name('topup.approve');
+    Route::post('/topup/{topupRequest}/reject',   [TopupController::class, 'reject'])->name('topup.reject');
+
+    // Refund management (admin web)
+    Route::post('/refund/{refundRequest}/approve',  [RefundController::class, 'approve'])->name('refund.approve');
+    Route::post('/refund/{refundRequest}/reject',   [RefundController::class, 'reject'])->name('refund.reject');
 });
 
 // ========================================
@@ -109,6 +126,7 @@ Route::middleware(['auth', 'role:admin_kantin'])->group(function () {
     Route::patch('/admin/shop/products/{product}', [ProductController::class, 'update'])->name('admin.shop.products.update');
     Route::delete('/admin/shop/products/{product}', [ProductController::class, 'destroy'])->name('admin.shop.products.destroy');
     Route::patch('/admin/shop/products/{product}/toggle', [ProductController::class, 'toggleAvailable'])->name('admin.shop.products.toggle');
+
 });
 Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/riwayat', [CustomerController::class, 'riwayat'])->name('customer.riwayat');

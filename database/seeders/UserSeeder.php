@@ -5,11 +5,15 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Shop;
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
+         $shopA = Shop::where('name', 'Kantin A - Nasi Goreng')->first();
+    $shopB = Shop::where('name', 'Kantin B - Mie Ayam')->first();
+    $shopC = Shop::where('name', 'Kantin C - Bakso')->first();
         // Admin Web (Super Admin KADI) - Bisa lihat SEMUA
         User::create([
             'name' => 'Admin KADI',
@@ -27,7 +31,7 @@ class UserSeeder extends Seeder
             'phone' => '081234567891',
             'password' => Hash::make('password'),
             'role' => 'admin_kantin',
-            'shop_id' => 1, // ID shop Kantin A
+            'shop_id' => $shopA->id, // ID shop Kantin A
         ]);
 
         // Admin Kantin B
@@ -37,7 +41,7 @@ class UserSeeder extends Seeder
             'phone' => '081234567892',
             'password' => Hash::make('password'),
             'role' => 'admin_kantin',
-            'shop_id' => 2, // ID shop Kantin B
+            'shop_id' => $shopB->id, // ID shop Kantin B
         ]);
 
         // Admin Kantin C
@@ -47,7 +51,7 @@ class UserSeeder extends Seeder
             'phone' => '081234567893',
             'password' => Hash::make('password'),
             'role' => 'admin_kantin',
-            'shop_id' => 3, // ID shop Kantin C
+            'shop_id' => $shopC->id, // ID shop Kantin C
         ]);
 
         // Customer Test

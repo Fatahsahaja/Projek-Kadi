@@ -51,6 +51,11 @@
             font-size: 0.85rem; text-transform: uppercase;
             letter-spacing: 1px; margin-bottom: 20px;
         }
+         .logo-img {
+            height: 55px;
+            object-fit: contain;
+            width: auto;
+        }
     </style>
 </head>
 <body>
@@ -58,15 +63,32 @@
 {{-- SIDEBAR --}}
 <aside class="sidebar">
     <div class="sidebar-brand">
-        <h4>K<span>◆</span>DI</h4>
-        <small style="color:rgba(255,255,255,0.4); font-size:0.75rem;">Super Admin Panel</small>
+      <img src="/images/Logowhite.png" alt="Logo Kadi" class="logo-img">
     </div>
+
     <nav class="sidebar-menu">
-        <a href="{{ route('admin.kadi.dashboard') }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
-        <a href="{{ route('admin.kadi.shops') }}" class="active"><i class="fas fa-store"></i> Manajemen Warung</a>
-        <a href="{{ route('admin.kadi.transactions') }}"><i class="fas fa-receipt"></i> Semua Transaksi</a>
-        <a href="{{ route('admin.kadi.export.csv') }}"><i class="fas fa-file-csv"></i> Export CSV</a>
+        <a href="{{ route('admin.kadi.dashboard') }}"
+           class="{{ request()->routeIs('admin.kadi.dashboard') ? 'active' : '' }}">
+            <i class="fas fa-chart-pie"></i> Dashboard
+        </a>
+        <a href="{{ route('admin.kadi.shops') }}"
+           class="{{ request()->routeIs('admin.kadi.shops*') ? 'active' : '' }}">
+            <i class="fas fa-store"></i> Manajemen Warung
+        </a>
+        <a href="{{ route('admin.kadi.transactions') }}"
+           class="{{ request()->routeIs('admin.kadi.transactions') ? 'active' : '' }}">
+            <i class="fas fa-receipt"></i> Semua Transaksi
+        </a>
+        <a href="{{ route('admin.kadi.topup') }}"
+           class="{{ request()->routeIs('admin.kadi.topup') ? 'active' : '' }}">
+            <i class="fas fa-wallet"></i> Manajemen Top Up
+        </a>
+        <a href="{{ route('admin.kadi.export.csv') }}"
+           class="{{ request()->routeIs('admin.kadi.export.csv') ? 'active' : '' }}">
+            <i class="fas fa-file-csv"></i> Export CSV
+        </a>
     </nav>
+
     <div class="sidebar-footer">
         <form method="POST" action="{{ route('logout') }}">
             @csrf
