@@ -26,6 +26,7 @@ class User extends Authenticatable
         'email_verification_sent_at',
         'name', 'nis', 'kelas', 'jurusan', 'balance',
         'email', 'phone', 'password', 'role', 'shop_id',
+        'is_blacklisted', 'blacklist_reason', 'blacklisted_at',
     ];
 
     protected $hidden = [
@@ -36,12 +37,14 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'phone_verified' => 'boolean',
-        'email_verified' => 'boolean',
+        'email_verified_at'          => 'datetime',
+        'phone_verified'             => 'boolean',
+        'email_verified'             => 'boolean',
         'phone_verification_sent_at' => 'datetime',
         'email_verification_sent_at' => 'datetime',
-        'password' => 'hashed',
+        'password'                   => 'hashed',
+        'is_blacklisted'             => 'boolean',
+        'blacklisted_at'             => 'datetime',
     ];
 
     /**
@@ -53,7 +56,12 @@ class User extends Authenticatable
     }
 
     public function shop()
-{
-    return $this->belongsTo(Shop::class);
-}
+    {
+        return $this->belongsTo(Shop::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(\App\Models\Transaction::class);
+    }
 }

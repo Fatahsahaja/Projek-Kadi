@@ -233,6 +233,10 @@
            class="{{ request()->routeIs('admin.kadi.topup') ? 'active' : '' }}">
             <i class="fas fa-wallet"></i> Manajemen Top Up
         </a>
+        <a href="{{ route('admin.kadi.blacklist') }}"
+   class="{{ request()->routeIs('admin.kadi.blacklist') ? 'active' : '' }}">
+    <i class="fas fa-ban"></i> Blacklist Customer
+</a>
         <a href="{{ route('admin.kadi.export.csv') }}"
            class="{{ request()->routeIs('admin.kadi.export.csv') ? 'active' : '' }}">
             <i class="fas fa-file-csv"></i> Export CSV

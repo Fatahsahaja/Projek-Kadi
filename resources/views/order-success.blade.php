@@ -120,7 +120,7 @@
                         {{-- Tombol --}}
                         <div class="d-grid gap-2">
                             <button onclick="window.print()" class="btn btn-outline-success rounded-3 py-2 fw-bold">
-                                 Lihat Struk / Cetak
+                                 Lihat Struk
                             </button>
                             <a href="{{ route('dashboard') }}" class="btn btn-primary rounded-3 py-2 fw-bold">
                                 Kembali ke Dashboard
@@ -210,7 +210,7 @@
 
                         <div class="d-grid gap-2">
                             <button onclick="window.print()" class="btn btn-outline-success rounded-3 py-2">
-                                 Cetak Struk
+                                 Lihat Struk
                             </button>
                             <a href="{{ route('dashboard') }}" class="btn btn-primary rounded-3 py-2 fw-bold">
                                 Kembali ke Dashboard

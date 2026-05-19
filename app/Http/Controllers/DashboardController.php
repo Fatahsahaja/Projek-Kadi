@@ -25,6 +25,7 @@ class DashboardController extends Controller
             $sampai = $request->input('sampai', now()->format('Y-m-d'));
 
             $transactions = Transaction::where('shop_id', $user->shop_id)
+                ->with('user')
                 ->whereDate('created_at', '>=', $dari)
                 ->whereDate('created_at', '<=', $sampai)
                 ->latest()

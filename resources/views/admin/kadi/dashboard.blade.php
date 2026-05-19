@@ -143,7 +143,7 @@
             border: 1px solid #e2e8f0;
         }
         .shop-stat-card h6 { color: #f7941d; font-weight: 600; margin-bottom: 8px; }
-         .logo-img {
+        .logo-img {
             height: 55px;
             object-fit: contain;
             width: auto;
@@ -153,43 +153,48 @@
 <body>
 
 {{-- SIDEBAR --}}
-<aside class="sidebar">
-    <div class="sidebar-brand">
-      <img src="/images/Logowhite.png" alt="Logo Kadi" class="logo-img">
-    </div>
+ <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="/images/Logowhite.png" alt="Logo Kadi" class="logo-img">
+        </div>
 
-    <nav class="sidebar-menu">
-        <a href="{{ route('admin.kadi.dashboard') }}"
-           class="{{ request()->routeIs('admin.kadi.dashboard') ? 'active' : '' }}">
-            <i class="fas fa-chart-pie"></i> Dashboard
-        </a>
-        <a href="{{ route('admin.kadi.shops') }}"
-           class="{{ request()->routeIs('admin.kadi.shops*') ? 'active' : '' }}">
-            <i class="fas fa-store"></i> Manajemen Warung
-        </a>
-        <a href="{{ route('admin.kadi.transactions') }}"
-           class="{{ request()->routeIs('admin.kadi.transactions') ? 'active' : '' }}">
-            <i class="fas fa-receipt"></i> Semua Transaksi
-        </a>
-        <a href="{{ route('admin.kadi.topup') }}"
-           class="{{ request()->routeIs('admin.kadi.topup') ? 'active' : '' }}">
-            <i class="fas fa-wallet"></i> Manajemen Top Up
-        </a>
-        <a href="{{ route('admin.kadi.export.csv') }}"
-           class="{{ request()->routeIs('admin.kadi.export.csv') ? 'active' : '' }}">
-            <i class="fas fa-file-csv"></i> Export CSV
-        </a>
-    </nav>
+        <nav class="sidebar-menu">
+            <a href="{{ route('admin.kadi.dashboard') }}"
+                class="{{ request()->routeIs('admin.kadi.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </a>
+            <a href="{{ route('admin.kadi.shops') }}"
+                class="{{ request()->routeIs('admin.kadi.shops*') ? 'active' : '' }}">
+                <i class="fas fa-store"></i> Manajemen Warung
+            </a>
+            <a href="{{ route('admin.kadi.transactions') }}"
+                class="{{ request()->routeIs('admin.kadi.transactions') ? 'active' : '' }}">
+                <i class="fas fa-receipt"></i> Semua Transaksi
+            </a>
+            <a href="{{ route('admin.kadi.topup') }}"
+                class="{{ request()->routeIs('admin.kadi.topup') ? 'active' : '' }}">
+                <i class="fas fa-wallet"></i> Manajemen Top Up
+            </a>
+            <a href="{{ route('admin.kadi.blacklist') }}"
+                class="{{ request()->routeIs('admin.kadi.blacklist') ? 'active' : '' }}">
+                <i class="fas fa-ban"></i> Blacklist Customer
+            </a>
+            <a href="{{ route('admin.kadi.export.csv') }}"
+                class="{{ request()->routeIs('admin.kadi.export.csv') ? 'active' : '' }}">
+                <i class="fas fa-file-csv"></i> Export CSV
+            </a>
+        </nav>
 
-    <div class="sidebar-footer">
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; padding:8px 20px; border-radius:8px; width:100%; font-size:0.85rem; cursor:pointer;">
-                <i class="fas fa-sign-out-alt me-2"></i> Logout
-            </button>
-        </form>
-    </div>
-</aside>
+        <div class="sidebar-footer">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit"
+                    style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; padding:8px 20px; border-radius:8px; width:100%; font-size:0.85rem; cursor:pointer;">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                </button>
+            </form>
+        </div>
+    </aside>
 
 {{-- MAIN CONTENT --}}
 <main class="main-content">
@@ -206,7 +211,7 @@
             </div>
             <div>
                 <div style="font-size:0.85rem; font-weight:600;">{{ auth()->user()->name }}</div>
-                <div style="font-size:0.75rem; color:#6b7280;">Admin KADI</div>
+                <div style="font-size:0.75rem; color:#6b7280;">Super Admin</div>
             </div>
         </div>
     </div>
@@ -246,24 +251,56 @@
     {{-- GRAFIK + WARUNG --}}
     <div class="row g-4 mb-4">
 
-        {{-- Grafik Transaksi --}}
+        {{-- Grafik Transaksi + Pendapatan --}}
         <div class="col-lg-8">
-            <div class="card-custom mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span><i class="fas fa-chart-bar me-2 text-warning"></i> Jumlah Transaksi 7 Hari Terakhir</span>
-                    <small class="text-muted">per hari</small>
-                </div>
-                <div class="card-body">
-                    <canvas id="grafikTransaksi" height="120"></canvas>
-                </div>
-            </div>
             <div class="card-custom">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span><i class="fas fa-chart-line me-2 text-warning"></i> Pendapatan 7 Hari Terakhir</span>
-                    <small class="text-muted">dalam Rupiah</small>
+                    <span><i class="fas fa-chart-line me-2 text-warning"></i> Transaksi & Pendapatan 7 Hari Terakhir</span>
+                    <small class="text-muted">per hari</small>
                 </div>
-                <div class="card-body">
-                    <canvas id="grafikPendapatan" height="120"></canvas>
+                <div class="card-body pb-0">
+                    <canvas id="grafikTransaksi" height="110"></canvas>
+                </div>
+                {{-- Tabel data di bawah grafik --}}
+                <div class="table-responsive" style="border-top:1px solid #f0f0f0;">
+                    <table class="table table-sm mb-0 text-center" style="font-size:0.8rem;">
+                        <thead style="background:#f8fafc;">
+                            <tr>
+                                <td class="text-start ps-3 fw-semibold text-muted" style="width:130px;">Keterangan</td>
+                                @foreach($grafik as $g)
+                                <td class="fw-semibold text-muted">{{ \Carbon\Carbon::parse($g->tanggal)->format('d M') }}</td>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-start ps-3 text-muted">
+                                    <span style="display:inline-block;width:10px;height:10px;background:#f7941d;border-radius:2px;margin-right:4px;"></span>
+                                    Transaksi
+                                </td>
+                                @foreach($grafik as $g)
+                                <td class="fw-medium">{{ $g->total_transaksi }}</td>
+                                @endforeach
+                            </tr>
+                            <tr style="background:#f8fafc;">
+                                <td class="text-start ps-3 text-muted">
+                                    <span style="display:inline-block;width:10px;height:10px;background:#3b82f6;border-radius:2px;margin-right:4px;"></span>
+                                    Pendapatan
+                                </td>
+                                @foreach($grafik as $g)
+                                <td class="fw-medium text-success">Rp {{ number_format($g->total_pendapatan, 0, ',', '.') }}</td>
+                                @endforeach
+                            </tr>
+                            <tr>
+                                <td class="text-start ps-3 text-muted fw-semibold">Kumulatif</td>
+                                @php $kumul = 0; @endphp
+                                @foreach($grafik as $g)
+                                    @php $kumul += $g->total_pendapatan; @endphp
+                                    <td class="fw-bold text-warning">Rp {{ number_format($kumul, 0, ',', '.') }}</td>
+                                @endforeach
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -320,81 +357,102 @@
 
 {{-- Chart.js Grafik --}}
 <script>
-    const labels        = @json($grafik->pluck('tanggal'));
-    const dataTransaksi = @json($grafik->pluck('total_transaksi'));
+    const labels         = @json($grafik->pluck('tanggal')->map(fn($t) => \Carbon\Carbon::parse($t)->format('d M')));
+    const dataTransaksi  = @json($grafik->pluck('total_transaksi'));
     const dataPendapatan = @json($grafik->pluck('total_pendapatan'));
 
-    // ── BAR CHART: Jumlah Transaksi ──
-    new Chart(document.getElementById('grafikTransaksi'), {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Jumlah Transaksi',
-                data: dataTransaksi,
-                backgroundColor: 'rgba(247,148,29,0.85)',
-                borderColor: '#f7941d',
-                borderWidth: 0,
-                borderRadius: 8,
-                borderSkipped: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: ctx => ` ${ctx.parsed.y} transaksi`
-                    }
-                }
-            },
-            scales: {
-                x: { grid: { display: false } },
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1, precision: 0 },
-                    grid: { color: 'rgba(0,0,0,0.05)' }
-                }
-            }
-        }
-    });
+    // Hitung kumulatif pendapatan
+    let kumul = 0;
+    const dataKumulatif = dataPendapatan.map(v => (kumul += v));
 
-    // ── LINE CHART: Pendapatan ──
-    new Chart(document.getElementById('grafikPendapatan'), {
+    new Chart(document.getElementById('grafikTransaksi'), {
         type: 'line',
         data: {
             labels: labels,
-            datasets: [{
-                label: 'Pendapatan',
-                data: dataPendapatan,
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59,130,246,0.08)',
-                tension: 0.4,
-                fill: true,
-                pointBackgroundColor: '#3b82f6',
-                pointRadius: 5,
-                pointHoverRadius: 7,
-            }]
+            datasets: [
+                {
+                    label: 'Jumlah Transaksi',
+                    data: dataTransaksi,
+                    borderColor: '#f7941d',
+                    backgroundColor: 'rgba(247,148,29,0.08)',
+                    borderWidth: 2.5,
+                    tension: 0.3,
+                    fill: false,
+                    pointBackgroundColor: '#f7941d',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    yAxisID: 'yTx',
+                },
+                {
+                    label: 'Pendapatan (Rp)',
+                    data: dataPendapatan,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59,130,246,0.06)',
+                    borderWidth: 2.5,
+                    tension: 0.3,
+                    fill: false,
+                    pointBackgroundColor: '#3b82f6',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    yAxisID: 'yRp',
+                },
+                {
+                    label: 'Kumulatif Pendapatan',
+                    data: dataKumulatif,
+                    borderColor: '#10b981',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    borderDash: [6, 3],
+                    tension: 0.3,
+                    fill: false,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#10b981',
+                    yAxisID: 'yRp',
+                },
+            ]
         },
         options: {
             responsive: true,
+            interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: { display: false },
+                legend: {
+                    position: 'top',
+                    labels: { boxWidth: 14, font: { size: 11 } }
+                },
                 tooltip: {
                     callbacks: {
-                        label: ctx => ` Rp ${ctx.parsed.y.toLocaleString('id-ID')}`
+                        label: ctx => {
+                            if (ctx.dataset.yAxisID === 'yRp') {
+                                return ` ${ctx.dataset.label}: Rp ${ctx.parsed.y.toLocaleString('id-ID')}`;
+                            }
+                            return ` ${ctx.dataset.label}: ${ctx.parsed.y} transaksi`;
+                        }
                     }
                 }
             },
             scales: {
-                x: { grid: { display: false } },
-                y: {
+                x: {
+                    grid: { color: 'rgba(0,0,0,0.04)' },
+                    ticks: { font: { size: 11 } }
+                },
+                yTx: {
+                    type: 'linear',
+                    position: 'left',
                     beginAtZero: true,
+                    ticks: { stepSize: 1, precision: 0, font: { size: 11 } },
                     grid: { color: 'rgba(0,0,0,0.05)' },
+                    title: { display: true, text: 'Transaksi', font: { size: 10 } }
+                },
+                yRp: {
+                    type: 'linear',
+                    position: 'right',
+                    beginAtZero: true,
+                    grid: { drawOnChartArea: false },
                     ticks: {
-                        callback: val => 'Rp ' + val.toLocaleString('id-ID')
-                    }
+                        font: { size: 11 },
+                        callback: val => 'Rp ' + (val >= 1000 ? (val/1000) + 'rb' : val)
+                    },
+                    title: { display: true, text: 'Rupiah', font: { size: 10 } }
                 }
             }
         }

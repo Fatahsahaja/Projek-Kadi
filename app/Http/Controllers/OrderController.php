@@ -39,6 +39,13 @@ class OrderController extends Controller
         $user  = auth()->user();
         $total = (float) $validated['total'];
 
+        // Cek blacklist
+        if ($user->is_blacklisted) {
+            return redirect()->back()->with('error',
+                'Akun kamu telah diblokir dari sistem. Hubungi admin KADI untuk informasi lebih lanjut.'
+            );
+        }
+
         // Cek saldo sebelum masuk DB transaction
         if ($validated['payment_method'] === 'saldo') {
             if ($user->balance < $total) {

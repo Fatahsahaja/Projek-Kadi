@@ -534,7 +534,7 @@
                 @if($user->nis)
                     <span class="info-value">{{ $user->nis }}</span>
                 @else
-                    <span class="info-empty">Belum diisi</span>
+                    <span class="info-empty">Tanpa NIS</span>
                 @endif
             </div>
             @if($nisData)

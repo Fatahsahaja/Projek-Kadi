@@ -18,7 +18,17 @@
                 <small class="text-muted">{{ $tx->created_at->format('H:i') }}</small>
             </td>
             <td onclick="window.location='{{ $tx->confirmation_token ? route('transactions.confirmByQR', $tx->confirmation_token) : route('transactions.show', $tx->id) }}'" style="cursor:pointer;">
-                {{ $tx->cashier_name }}
+                        <div>
+                            {{ $tx->cashier_name }}
+                            @if($tx->user && $tx->user->is_blacklisted)
+                            <span class="d-inline-block ms-1"
+                                  style="background:#fef2f2;color:#ef4444;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid #fecaca;"
+                                  title="Alasan: {{ $tx->user->blacklist_reason }}">
+                                🚫 BLACKLIST
+                            </span>
+                            @endif
+                        </div>
+                        <small class="text-muted">{{ $tx->phone }}</small>
             </td>
             <td onclick="window.location='{{ $tx->confirmation_token ? route('transactions.confirmByQR', $tx->confirmation_token) : route('transactions.show', $tx->id) }}'" style="cursor:pointer;">
                 @php

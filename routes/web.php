@@ -13,6 +13,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminKantinController;
 use App\Http\Controllers\TopupController;
 use App\Http\Controllers\RefundController;
+use App\Http\Controllers\BlacklistController;
 
 // ========================================
 // LANDING PAGE
@@ -115,6 +116,11 @@ Route::middleware(['auth', 'role:admin_web'])->prefix('admin/kadi')->name('admin
     // Refund management (admin web)
     Route::post('/refund/{refundRequest}/approve',  [RefundController::class, 'approve'])->name('refund.approve');
     Route::post('/refund/{refundRequest}/reject',   [RefundController::class, 'reject'])->name('refund.reject');
+
+    // Blacklist management (admin web)
+    Route::get('/blacklist',                        [BlacklistController::class, 'index'])->name('blacklist');
+    Route::post('/blacklist/{user}/blacklist',      [BlacklistController::class, 'blacklist'])->name('blacklist.add');
+    Route::post('/blacklist/{user}/unblacklist',    [BlacklistController::class, 'unblacklist'])->name('blacklist.remove');
 });
 
 // ========================================
