@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Shop;
 use App\Models\Transaction;
-class CustomerController extends Controller
 
+class CustomerController extends Controller
 {
     public function menu()
     {
-        $shops = Shop::with(['products' => function($q) {
+        $shops = Shop::with(['products' => function ($q) {
             $q->where('is_available', true)->where('stock', '>', 0)->limit(3);
         }])->get();
 
@@ -17,45 +17,51 @@ class CustomerController extends Controller
     }
 
     public function riwayat()
-{
-    $transactions = Transaction::where('user_id', auth()->id())
-        ->with('shop')
-        ->latest()
-        ->paginate(10);
+    {
+        $transactions = Transaction::where('user_id', auth()->id())
+            ->with('shop')
+            ->latest()
+            ->paginate(10);
 
-    return view('customer.riwayat', compact('transactions'));
-}
-public function profil()
-{
-    $user = auth()->user();
+        return view('customer.riwayat', compact('transactions'));
+    }
 
-    // Ambil data NIS template kalau ada
-    $nisData = $user->nis
-        ? \App\Models\NisTemplate::where('nis', $user->nis)->first()
-        : null;
+    public function profil()
+    {
+        $user = auth()->user();
 
-    // Total pengeluaran (hanya transaksi SUKSES)
-    $totalPengeluaran = Transaction::where('user_id', $user->id)
-        ->where('status', 'SUKSES')
-        ->sum('total');
+        // Ambil data NIS template kalau ada
+        $nisData = $user->nis
+            ? \App\Models\NisTemplate::where('nis', $user->nis)->first()
+            : null;
 
-    // Riwayat transaksi
-    $transactions = Transaction::where('user_id', $user->id)
-        ->with('shop')
-        ->latest()
-        ->paginate(8);
+        // FIX: Total pengeluaran hitung transaksi SELESAI saja
+        // (SELESAI = siswa sudah ambil & saldo sudah terpotong)
+        $totalPengeluaran = Transaction::where('user_id', $user->id)
+            ->where('status', 'SELESAI')
+            ->sum('total');
 
-    // Warung favorit (paling sering dipesan)
-    $warungFavorit = Transaction::where('user_id', $user->id)
-        ->where('status', 'SUKSES')
-        ->select('shop_id', \DB::raw('COUNT(*) as total'))
-        ->groupBy('shop_id')
-        ->orderByDesc('total')
-        ->with('shop')
-        ->first();
+        // Riwayat transaksi
+        $transactions = Transaction::where('user_id', $user->id)
+            ->with('shop')
+            ->latest()
+            ->paginate(8);
 
-    return view('customer.profil', compact(
-        'user', 'nisData', 'totalPengeluaran', 'transactions', 'warungFavorit'
-    ));
-}
+        // Warung favorit (paling sering dipesan, status SELESAI)
+        $warungFavorit = Transaction::where('user_id', $user->id)
+            ->where('status', 'SELESAI')
+            ->select('shop_id', \DB::raw('COUNT(*) as total'))
+            ->groupBy('shop_id')
+            ->orderByDesc('total')
+            ->with('shop')
+            ->first();
+
+        return view('customer.profil', compact(
+            'user',
+            'nisData',
+            'totalPengeluaran',
+            'transactions',
+            'warungFavorit'
+        ));
+    }
 }

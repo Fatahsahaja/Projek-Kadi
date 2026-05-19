@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,76 +14,114 @@ class TransactionController extends Controller
     // KONFIRMASI VIA QR
     // ─────────────────────────────────────────────
     public function confirmByQR(string $token)
-{
-    $transaction = Transaction::where('confirmation_token', $token)
-        ->with('shop')
-        ->first();
+    {
+        $transaction = Transaction::where('confirmation_token', $token)
+            ->with('shop')
+            ->first();
 
-    if (!$transaction) {
-        return redirect()->route('dashboard')
-            ->with('swal', ['type'=>'error','title'=>'Token Invalid','text'=>'Transaksi tidak ditemukan.']);
+        if (!$transaction) {
+            return redirect()->route('dashboard')
+                ->with('swal', ['type' => 'error', 'title' => 'Token Invalid', 'text' => 'Transaksi tidak ditemukan.']);
+        }
+
+        // Customer → lihat status saja
+        if (auth()->user()->role === 'customer') {
+            return view('transactions.status', compact('transaction'));
+        }
+
+        // Kalau sudah SELESAI/DIBATALKAN → redirect ke detail
+        if (in_array($transaction->status, ['SELESAI', 'DIBATALKAN'])) {
+            return redirect()->route('transactions.show', $transaction->id)
+                ->with('swal', ['type' => 'info', 'title' => 'Info', 'text' => 'Transaksi ini sudah ' . $transaction->status]);
+        }
+
+        // Admin kantin → cek warung
+        if (auth()->user()->role === 'admin_kantin' &&
+            $transaction->shop_id !== auth()->user()->shop_id) {
+            return redirect()->route('dashboard')
+                ->with('swal', ['type' => 'error', 'title' => 'Akses Ditolak', 'text' => 'Bukan transaksi warung kamu!']);
+        }
+
+        return view('transactions.confirm', compact('transaction'));
     }
-
-    // Customer → lihat status saja
-    if (auth()->user()->role === 'customer') {
-        return view('transactions.status', compact('transaction'));
-    }
-
-    // Kalau sudah SUKSES/SELESAI → redirect ke detail saja
-    if ($transaction->status !== 'PENDING') {
-        return redirect()->route('transactions.show', $transaction->id)
-            ->with('swal', ['type'=>'info','title'=>'Info','text'=>'Transaksi ini sudah '.$transaction->status]);
-    }
-
-    // Admin kantin → cek warung
-    if (auth()->user()->role === 'admin_kantin' &&
-        $transaction->shop_id !== auth()->user()->shop_id) {
-        return redirect()->route('dashboard')
-            ->with('swal', ['type'=>'error','title'=>'Akses Ditolak','text'=>'Bukan transaksi warung kamu!']);
-    }
-
-    return view('transactions.confirm', compact('transaction'));
-}
 
     // ─────────────────────────────────────────────
-    // PROSES KONFIRMASI (dipanggil dari form di confirm.blade.php)
+    // PROSES KONFIRMASI STEP 1: PENDING → SIAP
+    // Admin kantin scan QR → pesanan disiapkan
+    // Stok berkurang, tapi saldo BELUM dipotong
     // ─────────────────────────────────────────────
     public function processConfirm(Transaction $transaction)
     {
-        try {
-            DB::transaction(function () use ($transaction) {
-                $items = is_array($transaction->items)
-                    ? $transaction->items
-                    : json_decode($transaction->items, true);
+        // Jika masih PENDING → ubah ke SIAP (pesanan sedang disiapkan)
+        if ($transaction->status === 'PENDING') {
+            try {
+                DB::transaction(function () use ($transaction) {
+                    $items = is_array($transaction->items)
+                        ? $transaction->items
+                        : json_decode($transaction->items, true);
 
-                foreach ($items as $item) {
-                    if (isset($item['product_id'])) {
-                        Product::where('id', $item['product_id'])
-                            ->decrement('stock', $item['quantity'] ?? 1);
+                    // Kurangi stok saat pesanan mulai disiapkan
+                    foreach ($items as $item) {
+                        if (isset($item['product_id'])) {
+                            Product::where('id', $item['product_id'])
+                                ->decrement('stock', $item['quantity'] ?? 1);
+                        }
                     }
-                }
 
-                $transaction->shop->increment('balance', $transaction->total);
+                    $transaction->update([
+                        'status' => 'SIAP',
+                    ]);
+                });
 
-                $transaction->update([
-                    'status'       => 'SUKSES',
-                    'confirmed_at' => now(),
+                return redirect()->route('dashboard')->with('swal', [
+                    'type'  => 'success',
+                    'title' => 'Pesanan Disiapkan! ',
+                    'text'  => 'Pesanan #' . $transaction->id . ' atas nama ' . $transaction->cashier_name . ' sedang disiapkan. Tunggu siswa mengambil.',
                 ]);
-            });
-
-            return redirect()->route('dashboard')->with('swal', [
-                'type'  => 'success',
-                'title' => 'Pesanan Dikonfirmasi! 🎉',
-                'text'  => 'Pesanan atas nama ' . $transaction->cashier_name . ' berhasil dikonfirmasi!',
-            ]);
-
-        } catch (\Exception $e) {
-            return redirect()->route('dashboard')->with('swal', [
-                'type'  => 'error',
-                'title' => 'Gagal Konfirmasi',
-                'text'  => 'Terjadi kesalahan sistem. Silakan coba lagi.',
-            ]);
+            } catch (\Exception $e) {
+                return redirect()->route('dashboard')->with('swal', [
+                    'type'  => 'error',
+                    'title' => 'Gagal',
+                    'text'  => 'Terjadi kesalahan sistem.',
+                ]);
+            }
         }
+
+        // Jika sudah SIAP → ubah ke SELESAI (siswa sudah ambil, saldo dipotong)
+        if ($transaction->status === 'SIAP') {
+            try {
+                DB::transaction(function () use ($transaction) {
+                    // Potong saldo customer (jika bayar saldo)
+                    if ($transaction->payment_method === 'saldo' && $transaction->user_id) {
+                        $transaction->user->decrement('balance', $transaction->total);
+                    }
+
+                    // Tambah balance warung
+                    $transaction->shop->increment('balance', $transaction->total);
+
+                    $transaction->update([
+                        'status'       => 'SELESAI',
+                        'confirmed_at' => now(),
+                    ]);
+                });
+
+                return redirect()->route('dashboard')->with('swal', [
+                    'type'  => 'success',
+                    'title' => 'Transaksi Selesai! ',
+                    'text'  => 'Pesanan #' . $transaction->id . ' atas nama ' . $transaction->cashier_name . ' sudah diserahkan.',
+                ]);
+            } catch (\Exception $e) {
+                return redirect()->route('dashboard')->with('swal', [
+                    'type'  => 'error',
+                    'title' => 'Gagal',
+                    'text'  => 'Terjadi kesalahan sistem.',
+                ]);
+            }
+        }
+
+        // Status lain (sudah SELESAI/DIBATALKAN)
+        return redirect()->route('transactions.show', $transaction->id)
+            ->with('swal', ['type' => 'info', 'title' => 'Info', 'text' => 'Transaksi ini sudah ' . $transaction->status]);
     }
 
     // ─────────────────────────────────────────────
@@ -94,12 +133,12 @@ class TransactionController extends Controller
     }
 
     // ─────────────────────────────────────────────
-    // UPDATE STATUS MANUAL
+    // UPDATE STATUS MANUAL (admin web)
     // ─────────────────────────────────────────────
     public function updateStatus(Request $request, Transaction $transaction)
     {
         $request->validate([
-            'status' => 'required|in:PENDING,SUKSES,SELESAI',
+            'status' => 'required|in:PENDING,SIAP,SELESAI,DIBATALKAN',
         ]);
 
         $transaction->update(['status' => $request->status]);
@@ -143,8 +182,6 @@ class TransactionController extends Controller
     {
         $user = auth()->user();
 
-        // Validasi akses: customer hanya bisa cancel miliknya,
-        // admin kantin hanya bisa cancel transaksi di warungnya sendiri
         if ($user->role === 'customer' && $transaction->user_id !== $user->id) {
             abort(403, 'Bukan pesanan Anda.');
         }
@@ -153,32 +190,23 @@ class TransactionController extends Controller
             abort(403, 'Bukan transaksi warung Anda.');
         }
 
-        // Hanya PENDING atau SUKSES (bayar saldo) yang bisa dibatalkan
-        if (!in_array($transaction->status, ['PENDING', 'SUKSES'])) {
+        // Hanya PENDING yang bisa dibatalkan (SIAP sudah mulai disiapkan)
+        if ($transaction->status !== 'PENDING') {
             return redirect()->back()->with('swal', [
                 'type'  => 'error',
                 'title' => 'Tidak Bisa Dibatalkan!',
-                'text'  => 'Pesanan sudah selesai atau sudah dibatalkan.',
+                'text'  => 'Pesanan dengan status ' . $transaction->status . ' tidak bisa dibatalkan.',
             ]);
         }
 
-        // Kalau bayar saldo & status SUKSES → refund saldo ke customer
         DB::transaction(function () use ($transaction) {
-            if ($transaction->payment_method === 'saldo' && $transaction->status === 'SUKSES') {
-                $transaction->user->increment('balance', $transaction->total);
-                $transaction->shop->decrement('balance', $transaction->total);
-            }
             $transaction->update(['status' => 'DIBATALKAN']);
         });
-
-        $pesanRefund = ($transaction->payment_method === 'saldo' && $transaction->status === 'SUKSES')
-            ? ' Saldo Rp ' . number_format($transaction->total, 0, ',', '.') . ' telah dikembalikan ke customer.'
-            : '';
 
         return redirect()->back()->with('swal', [
             'type'  => 'info',
             'title' => 'Pesanan Dibatalkan',
-            'text'  => 'Pesanan berhasil dibatalkan.' . $pesanRefund,
+            'text'  => 'Pesanan #' . $transaction->id . ' berhasil dibatalkan.',
         ]);
     }
 }

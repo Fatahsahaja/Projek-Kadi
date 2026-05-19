@@ -48,7 +48,7 @@
 
                         <p class="text-muted mb-4" id="status-desc">
                             @if ($transaction->status === 'SUKSES' || $transaction->status === 'SELESAI')
-                                Pesananmu sudah siap, silakan ambil! 🎉
+                                Pesananmu sudah siap, silakan ambil! 
                             @elseif ($transaction->status === 'DIBATALKAN')
                                 Pesanan ini telah dibatalkan.
                             @else

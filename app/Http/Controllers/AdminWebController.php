@@ -19,22 +19,23 @@ class AdminWebController extends Controller
     public function dashboard()
     {
         // Stats cards
-        $totalPendapatan = Transaction::where('status', 'SUKSES')->sum('total');
+        $totalPendapatan = Transaction::where('status', 'SELESAI')->sum('total');
         $totalTransaksi  = Transaction::count();
         $totalWarung     = Shop::count();
-        $totalPending    = Transaction::where('status', 'PENDING')->count();
+        $totalPending    = Transaction::whereIn('status', ['PENDING', 'SIAP'])->count();
 
-        // Data warung + pendapatan
+        // Data warung + pendapatan (hanya transaksi SELESAI)
         $shops = Shop::withCount('transactions')
-            ->withSum('transactions', 'total')
+            ->withSum(['transactions' => fn($q) => $q->where('status', 'SELESAI')], 'total')
             ->get();
 
-        // Grafik 7 hari terakhir
+        // Grafik 7 hari terakhir — hanya transaksi SELESAI
         $grafik = Transaction::select(
                 DB::raw('DATE(created_at) as tanggal'),
                 DB::raw('COUNT(*) as total_transaksi'),
                 DB::raw('SUM(total) as total_pendapatan')
             )
+            ->where('status', 'SELESAI')
             ->where('created_at', '>=', now()->subDays(7))
             ->groupBy('tanggal')
             ->orderBy('tanggal')

@@ -249,6 +249,7 @@
         .status-sukses { background:#f0fdf4; color:#10b981; padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
         .status-pending { background:#fff7ed; color:#f7941d; padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
         .status-batal { background:#fef2f2; color:#ef4444; padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
+        .status-siap { background:#ecfdf5; color:#10b981; padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
         .status-selesai { background:#eff6ff; color:#3b82f6; padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
 
         /* DOMPET */
@@ -499,7 +500,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-value text-success" style="color:#10b981!important">
-                        {{ $transactions->getCollection()->where('status','SUKSES', 'SELESAI')->count() }}
+                        {{ $transactions->getCollection()->where('status','SELESAI')->count() }}
                     </div>
                     <div class="stat-label">Sukses</div>
                 </div>
@@ -662,14 +663,18 @@
                         <span style="font-weight:700;font-size:0.88rem;">#{{ $tx->id }}</span>
                         <span class="tx-shop ms-2">{{ $tx->shop->name }}</span>
                     </div>
-                    @if($tx->status === 'SUKSES')
-                        <span class="status-sukses">✅ SUKSES</span>
+                    @if($tx->status === 'SELESAI')
+                        <span class="status-selesai"> SELESAI</span>
+                    @elseif($tx->status === 'SIAP')
+                        <span class="status-siap"> SIAP DIAMBIL</span>
+                    @elseif($tx->status === 'SUKSES')
+                        <span class="status-sukses"> SUKSES</span>
                     @elseif($tx->status === 'PENDING')
-                        <span class="status-pending">⏳ PENDING</span>
+                        <span class="status-pending"> PENDING</span>
                     @elseif($tx->status === 'DIBATALKAN')
-                        <span class="status-batal">❌ BATAL</span>
+                        <span class="status-batal"> BATAL</span>
                     @else
-                        <span class="status-selesai">📦 SELESAI</span>
+                        <span class="status-selesai"> SELESAI</span>
                     @endif
                 </div>
 
@@ -693,9 +698,9 @@
                         🧾 Detail
                     </a>
 
-                    @if(in_array($tx->status, ['PENDING', 'SUKSES']) && $tx->payment_method === 'saldo' || $tx->status === 'PENDING')
+                    @if($tx->status === 'PENDING')
                     <form action="{{ route('transactions.cancel', $tx->id) }}" method="POST"
-                          onsubmit="return confirm('Batalkan pesanan ini?{{ $tx->payment_method === 'saldo' && $tx->status === 'SUKSES' ? ' Saldo akan dikembalikan.' : '' }}')">
+                          onsubmit="return confirm('Batalkan pesanan ini?')">
                         @csrf
                         @method('PATCH')
                         <button type="submit"
@@ -796,4 +801,4 @@ function profilApp() {
 </script>
 @endif
 </body>
-</html>
+</html>t

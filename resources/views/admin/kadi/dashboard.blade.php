@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body { font-family: 'Inter', sans-serif; background: #f0f2f5; }
 
@@ -211,7 +211,6 @@
             </div>
             <div>
                 <div style="font-size:0.85rem; font-weight:600;">{{ auth()->user()->name }}</div>
-                <div style="font-size:0.75rem; color:#6b7280;">Super Admin</div>
             </div>
         </div>
     </div>
@@ -354,9 +353,11 @@
 @endif
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 {{-- Chart.js Grafik --}}
 <script>
+document.addEventListener('DOMContentLoaded', function () {
     const labels         = @json($grafik->pluck('tanggal')->map(fn($t) => \Carbon\Carbon::parse($t)->format('d M')));
     const dataTransaksi  = @json($grafik->pluck('total_transaksi'));
     const dataPendapatan = @json($grafik->pluck('total_pendapatan'));
@@ -457,6 +458,7 @@
             }
         }
     });
+}); // end DOMContentLoaded
 </script>
 
 </body>

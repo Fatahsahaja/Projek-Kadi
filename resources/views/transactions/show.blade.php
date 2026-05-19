@@ -91,7 +91,7 @@
                         <div class="card-body p-4">
                             {{-- STRUK SECTION - hanya muncul saat print --}}
                             <div class="text-center mb-3 d-none d-print-block">
-                                <h5 class="fw-bold">🏫 KADI — Kantin Digital</h5>
+                                <h5 class="fw-bold"> KADI — Kantin Digital</h5>
                                 <small class="text-muted">================================</small>
                                 <div class="text-start mt-2" style="font-family: monospace; font-size: 0.85rem;">
                                     <div>No. Pesanan : #{{ $transaction->id }}</div>
@@ -197,16 +197,17 @@
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="SELESAI">
                                     <button type="submit" class="btn btn-outline-primary w-100 rounded-3">
-                                        📦 Tandai Selesai
+                                     Tandai Selesai
                                     </button>
                                 </form>
                             @endif
                             @if ($transaction->status === 'SUKSES' || $transaction->status === 'SELESAI')
-                                <button onclick="window.print()" class="btn btn-outline-success w-100 mt-2 rounded-3">
-                                    🖨️ Cetak Struk
-                                </button>
-                            @endif
 
+                            @endif
+                            
+                            <button onclick="window.print()" class="btn btn-outline-warning rounded-3 py-2 fw-bold w-100">
+                                 Lihat Struk
+                            </button>
                             <a href="{{ auth()->user()->role === 'customer' ? route('customer.profil') : route('dashboard') }}" class="btn btn-outline-secondary w-100 mt-2 rounded-3">
                                 Kembali
                             </a>

@@ -332,7 +332,7 @@
 
     <div class="hero-content">
         <div class="hero-badge">
-            🍽️ Kantin Digital Sekolah
+             Kantin Digital Sekolah
         </div>
 
         <h1 class="hero-title">
@@ -379,7 +379,7 @@
                     <div class="mock-logo">K<span>✦</span>DI</div>
                     <div class="mock-chip">🛒 0</div>
                 </div>
-                <div class="mock-section">🍽️ Menu Tersedia</div>
+                <div class="mock-section">Menu Tersedia</div>
                 <div class="mock-card">
                     <div class="mock-img">🍛</div>
                     <div>
@@ -434,15 +434,15 @@
         <div class="col-md-4 col-sm-6">
             <div class="feat-card">
                 <div class="feat-icon">🔲</div>
-                <div class="feat-title">Konfirmasi via QR</div>
-                <div class="feat-desc">Setiap pesanan generate QR unik. Admin scan QR untuk konfirmasi — cepat dan akurat.</div>
+                <div class="feat-title">Detail Transaksi Dengan QR</div>
+                <div class="feat-desc">Setiap pesanan generate QR unik. Dapat scan untuk melihat detail transaksi.</div>
             </div>
         </div>
         <div class="col-md-4 col-sm-6">
             <div class="feat-card">
                 <div class="feat-icon">💰</div>
-                <div class="feat-title">Cashless</div>
-                <div class="feat-desc">Semua transaksi tercatat digital. Balance warung terupdate otomatis setiap transaksi.</div>
+                <div class="feat-title">Pembayaran Praktis</div>
+                <div class="feat-desc">Semua transaksi dapat tercatat secara sistematis. Balance warung terupdate otomatis setiap transaksi.</div>
             </div>
         </div>
         <div class="col-md-4 col-sm-6">
@@ -455,8 +455,8 @@
         <div class="col-md-4 col-sm-6">
             <div class="feat-card">
                 <div class="feat-icon">⚡</div>
-                <div class="feat-title">Notif Real-time</div>
-                <div class="feat-desc">Admin dapat notifikasi langsung saat ada pesanan masuk. Tidak ada yang terlewat.</div>
+                <div class="feat-title">Style Website Kantin Unik</div>
+                <div class="feat-desc">Syle website memanjakan mata untuk pengguna website.</div>
             </div>
         </div>
         <div class="col-md-4 col-sm-6">
@@ -478,7 +478,7 @@
         </h2>
         <p class="cta-desc">Daftar gratis dan nikmati kemudahan pesan makan di kantin sekolah!</p>
         <a href="{{ route('register') }}" class="btn-cta-main">
-            Daftar Sekarang — Gratis! 🚀
+            Daftar Sekarang — Gratis!
         </a>
     </div>
 </section>

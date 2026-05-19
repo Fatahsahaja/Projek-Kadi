@@ -50,6 +50,7 @@
 
         .status-pending  { background:#fff7ed; color:#f7941d; padding:4px 12px; border-radius:6px; font-size:0.8rem; font-weight:600; }
         .status-sukses   { background:#f0fdf4; color:#10b981; padding:4px 12px; border-radius:6px; font-size:0.8rem; font-weight:600; }
+        .status-siap    { background:#ecfdf5; color:#10b981; padding:4px 12px; border-radius:6px; font-size:0.8rem; font-weight:600; }
         .status-selesai  { background:#eff6ff; color:#3b82f6; padding:4px 12px; border-radius:6px; font-size:0.8rem; font-weight:600; }
     </style>
 </head>
@@ -102,7 +103,7 @@
         <div class="col-4">
             <div class="text-center p-3 rounded-3 border">
                 <div class="fw-bold fs-4 text-success">
-                    {{ $transactions->getCollection()->where('status','SUKSES')->count() }}
+                    {{ $transactions->getCollection()->where('status','SELESAI')->count() }}
                 </div>
                 <small class="text-muted">Sukses</small>
             </div>
@@ -110,7 +111,7 @@
         <div class="col-4">
             <div class="text-center p-3 rounded-3 border">
                 <div class="fw-bold fs-4 text-warning">
-                    {{ $transactions->getCollection()->where('status','PENDING')->count() }}
+                    {{ $transactions->getCollection()->where('status','PENDING')->count() + $transactions->getCollection()->where('status','SIAP')->count() }}
                 </div>
                 <small class="text-muted">Pending</small>
             </div>
@@ -126,11 +127,13 @@
                 <span class="text-muted ms-2" style="font-size:0.85rem;">{{ $tx->shop->name }}</span>
             </div>
            @if($tx->status === 'PENDING')
-    <span class="status-pending">⏳ PENDING</span>
+    <span class="status-pending"> PENDING</span>
+@elseif($tx->status === 'SIAP')
+    <span class="status-siap"> SIAP DIAMBIL</span>
 @elseif($tx->status === 'SUKSES')
-    <span class="status-sukses">✅ SUKSES</span>
+    <span class="status-sukses">SUKSES</span>
 @elseif($tx->status === 'SELESAI')
-    <span class="status-selesai">📦 SELESAI</span>
+    <span class="status-selesai"> SELESAI</span>
 @elseif($tx->status === 'DIBATALKAN')
     <span style="background:#fef2f2;color:#ef4444;padding:4px 12px;border-radius:6px;font-size:0.8rem;font-weight:600;">❌ DIBATALKAN</span>
 @endif

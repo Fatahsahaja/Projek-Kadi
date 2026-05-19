@@ -268,8 +268,41 @@
         </div>
     </div>
 
+    {{-- SEARCH & FILTER BAR --}}
+    <div class="container pt-4 pb-2">
+        <div class="d-flex gap-2 flex-wrap align-items-center">
+            <div class="position-relative flex-grow-1" style="min-width:200px;max-width:400px;">
+                <i class="bi bi-search position-absolute" style="left:14px;top:50%;transform:translateY(-50%);color:#aaa;font-size:0.9rem;"></i>
+                <input type="text" id="searchInput" placeholder="Cari menu..."
+                    class="form-control rounded-pill ps-5 pe-3"
+                    style="border:1.5px solid #f0f0f0;font-size:0.88rem;height:42px;">
+            </div>
+            <select id="filterHarga" class="form-select rounded-pill"
+                style="width:auto;border:1.5px solid #f0f0f0;font-size:0.88rem;height:42px;cursor:pointer;">
+                <option value="semua">Semua Harga</option>
+                <option value="murah">Dibawah Rp 5.000</option>
+                <option value="sedang">Rp 5.000 – Rp 15.000</option>
+                <option value="mahal">Diatas Rp 15.000</option>
+            </select>
+            <select id="filterStok" class="form-select rounded-pill"
+                style="width:auto;border:1.5px solid #f0f0f0;font-size:0.88rem;height:42px;cursor:pointer;">
+                <option value="semua">Semua</option>
+                <option value="tersedia">Tersedia</option>
+                <option value="habis">Habis</option>
+            </select>
+            <button id="btnReset" onclick="resetFilter()"
+                class="btn btn-outline-secondary rounded-pill px-3"
+                style="font-size:0.82rem;height:42px;display:none;">
+                <i class="bi bi-x-circle me-1"></i> Reset
+            </button>
+        </div>
+        <div id="hasilInfo" class="mt-2" style="font-size:0.8rem;color:#aaa;display:none;">
+            Menampilkan <span id="jumlahHasil" class="fw-semibold" style="color:#f7941d;">0</span> menu
+        </div>
+    </div>
+
     {{-- PRODUK GRID --}}
-    <div class="container py-5 mb-5">
+    <div class="container py-3 mb-5">
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4" role="alert">
@@ -285,9 +318,12 @@
             </div>
         @endif
 
-        <div class="row g-4">
+        <div class="row g-4" id="productGrid">
             @forelse($products as $product)
-                <div class="col-6 col-md-4 col-lg-3">
+                <div class="col-6 col-md-4 col-lg-3 product-card-col"
+                    data-name="{{ strtolower($product->name) }}"
+                    data-price="{{ $product->price }}"
+                    data-stok="{{ $product->stock > 0 && $product->is_available ? 'tersedia' : 'habis' }}">
                     <div class="card-menu text-center d-flex flex-column h-100">
                         <div class="card-img-wrapper">
                             @if ($product->image)
@@ -333,8 +369,14 @@
                         </div>
                     </div>
                 </div>
+
+    {{-- No result state --}}
+    <div id="noResult" class="col-12 text-center py-5" style="display:none;">
+        <div style="font-size:3.5rem;opacity:0.2;">🔍</div>
+        <p class="text-muted mt-3">Menu tidak ditemukan.<br><small>Coba kata kunci lain atau reset filter.</small></p>
+    </div>
             @empty
-                <div class="col-12 text-center py-5">
+                <div class="col-12 text-center py-5" id="emptyState">
                     <div style="font-size:4rem; opacity:0.2;">🍽️</div>
                     <p class="text-muted mt-3">Belum ada menu tersedia.</p>
                 </div>
@@ -461,6 +503,69 @@
             myModal.show();
         @endif
     </script>
+
+<script>
+(function() {
+    const searchInput  = document.getElementById('searchInput');
+    const filterHarga  = document.getElementById('filterHarga');
+    const filterStok   = document.getElementById('filterStok');
+    const btnReset     = document.getElementById('btnReset');
+    const hasilInfo    = document.getElementById('hasilInfo');
+    const jumlahHasil  = document.getElementById('jumlahHasil');
+    const noResult     = document.getElementById('noResult');
+    const cards        = document.querySelectorAll('.product-card-col');
+
+    function filterProducts() {
+        const q      = searchInput.value.toLowerCase().trim();
+        const harga  = filterHarga.value;
+        const stok   = filterStok.value;
+        let visible  = 0;
+
+        cards.forEach(card => {
+            const name  = card.dataset.name || '';
+            const price = parseInt(card.dataset.price) || 0;
+            const stokV = card.dataset.stok;
+
+            const matchSearch = q === '' || name.includes(q);
+
+            const matchHarga = harga === 'semua'
+                || (harga === 'murah'  && price < 5000)
+                || (harga === 'sedang' && price >= 5000 && price <= 15000)
+                || (harga === 'mahal'  && price > 15000);
+
+            const matchStok = stok === 'semua' || stok === stokV;
+
+            if (matchSearch && matchHarga && matchStok) {
+                card.style.display = '';
+                visible++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Tampilkan info hasil
+        const isFiltered = q !== '' || harga !== 'semua' || stok !== 'semua';
+        hasilInfo.style.display = isFiltered ? 'block' : 'none';
+        jumlahHasil.textContent = visible;
+        btnReset.style.display  = isFiltered ? 'inline-block' : 'none';
+        noResult.style.display  = (isFiltered && visible === 0) ? 'block' : 'none';
+    }
+
+    function resetFilter() {
+        searchInput.value    = '';
+        filterHarga.value    = 'semua';
+        filterStok.value     = 'semua';
+        filterProducts();
+    }
+
+    window.resetFilter = resetFilter;
+
+    searchInput.addEventListener('input', filterProducts);
+    filterHarga.addEventListener('change', filterProducts);
+    filterStok.addEventListener('change', filterProducts);
+})();
+</script>
+
 </body>
 
 </html>

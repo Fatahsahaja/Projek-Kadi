@@ -18,10 +18,9 @@ class OrderController extends Controller
             return redirect()->route('customer.menu')->with('error', 'Keranjang kamu kosong!');
         }
 
-        // Hitung total dari subtotal tiap item
-        $total = array_sum(array_column($cart, 'subtotal'));
+        $total   = array_sum(array_column($cart, 'subtotal'));
         $shop_id = $cart[0]['shop_id'];
-        $shop = Shop::findOrFail($shop_id);
+        $shop    = Shop::findOrFail($shop_id);
 
         return view('order-confirm', compact('cart', 'total', 'shop'));
     }
@@ -46,11 +45,13 @@ class OrderController extends Controller
             );
         }
 
-        // Cek saldo sebelum masuk DB transaction
+        // Cek saldo cukup (cek awal, belum dipotong)
         if ($validated['payment_method'] === 'saldo') {
             if ($user->balance < $total) {
-                return redirect()->back()
-                    ->with('error', 'Saldo kamu tidak cukup! Saldo saat ini: Rp ' . number_format($user->balance, 0, ',', '.') . '. Silakan isi saldo terlebih dahulu.');
+                return redirect()->back()->with('error',
+                    'Saldo kamu tidak cukup! Saldo saat ini: Rp ' . number_format($user->balance, 0, ',', '.') .
+                    '. Silakan isi saldo terlebih dahulu.'
+                );
             }
         }
 
@@ -58,10 +59,8 @@ class OrderController extends Controller
         $transaction = null;
 
         DB::transaction(function () use ($validated, $user, $total, $token, &$transaction) {
-            $isSaldo      = $validated['payment_method'] === 'saldo';
-            $status       = $isSaldo ? 'SUKSES' : 'PENDING';
-            $confirmedAt  = $isSaldo ? now() : null;
-
+            // Semua pesanan mulai dari PENDING
+            // Saldo TIDAK dipotong di sini — dipotong saat admin konfirmasi SELESAI
             $transaction = Transaction::create([
                 'shop_id'            => $validated['shop_id'],
                 'user_id'            => $user->id,
@@ -69,18 +68,12 @@ class OrderController extends Controller
                 'items'              => $validated['items'],
                 'phone'              => $user->phone,
                 'total'              => $total,
-                'status'             => $status,
+                'status'             => 'PENDING',
                 'notes'              => $validated['notes'] ?? null,
                 'confirmation_token' => $token,
-                'confirmed_at'       => $confirmedAt,
+                'confirmed_at'       => null,
                 'payment_method'     => $validated['payment_method'],
             ]);
-
-            // Bayar saldo: potong saldo customer + tambah balance warung
-            if ($isSaldo) {
-                $user->decrement('balance', $total);
-                $transaction->shop->increment('balance', $total);
-            }
         });
 
         session()->forget('cart');
@@ -88,10 +81,8 @@ class OrderController extends Controller
         return redirect()->route('order.success')->with('order_id', $transaction->id);
     }
 
-    // Tambahkan method ini di OrderController
     public function checkStatus(Transaction $transaction)
     {
-        // Pastikan hanya pemilik pesanan yang bisa cek
         if ($transaction->user_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
@@ -113,7 +104,7 @@ class OrderController extends Controller
         $transaction = Transaction::with('shop')->findOrFail($order_id);
 
         $qrUrl = route('transactions.confirmByQR', [
-            'token' => $transaction->confirmation_token
+            'token' => $transaction->confirmation_token,
         ]);
 
         return view('order-success', compact('transaction', 'qrUrl'));
